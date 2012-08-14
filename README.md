@@ -62,9 +62,30 @@ Welcome back!
 120
 ````
 
-TODO: document (ken-id) and (ken-send)
+Language features
+=================
 
-Dialect
-=======
+As Schemeken is built on the SLIP interpreter, it supports a subset of R5RS.
+Most notable is lack of support for hygienic macros and file I/O procedures.
+See `Slip/SlipNative.c:30` for a list of supported primitives.
 
-TODO: document how Schemeken differs from R5RS.
+Schemeken adds two new primitives to make use of Ken's messaging system:
+
+* `(ken-id)`: returns the current Ken ID.
+
+  ````console
+  >>> (ken-id)
+  <ken-id 127.0.0.1:6789>
+  ````
+
+* `(ken-send <ken-id> <string>)`: Sends a message (currently a string) to the given Ken process.
+
+  ````console
+  >>> (ken-send (ken-id) "Hello, world")
+  >>>
+  Received message from 127.0.0.1:6789:
+  Hello, world
+  Message end.
+  ````
+
+In coming versions we plan to layer future-type messaging on top of these primitives.
