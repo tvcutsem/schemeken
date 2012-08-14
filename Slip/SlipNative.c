@@ -3852,7 +3852,7 @@ static NIL_type ken_send_native(FRM_type Argument_frame,
     kid = kid_expression;
     rawstring = argument->rws;
     (void) ken_send(kid->rwk, rawstring, strlen(rawstring));
-    }
+    Main_Set_Expression(Grammar_Unspecified); }
 
 /*--------------------------------------------------------------------------------------*/
 
