@@ -3860,6 +3860,36 @@ static NIL_type initialize_ken_send_M(NIL_type)
   { native_define_M(ksd_rawstring,
                     ken_send_native); }
 
+/*---------------------------------- ken-receive-handler -------------------------------*/
+
+static const RWS_type krh_rawstring = "ken-receive-handler";
+
+static NIL_type default_receive_handler(FRM_type Argument_frame,
+                                        EXP_type Tail_call_expression)
+  { EXP_type argument_expression, kid_expression;
+    KID_type kid;
+    RWS_type rawstring;
+    require_2_arguments(Argument_frame,
+                        &kid_expression,
+                        &argument_expression,
+                        krh_rawstring);
+    if (!is_KID(kid_expression))
+      native_error(NAK_error,
+                   krh_rawstring);
+
+    kid = (KID_type) kid_expression;
+    Slip_Print("Received from ");
+    Print_Display(kid);
+    Slip_Print(": ");
+    Print_Print(argument_expression);
+    Slip_Print("\n");
+
+    Main_Set_Expression(Grammar_Unspecified); }
+
+static NIL_type initialize_ken_receive_handler_M(NIL_type)
+  { native_define_M(krh_rawstring,
+                    default_receive_handler); }
+
 /*--------------------------------------------------------------------------------------*/
 
 NIL_type Native_Initialize_M(NIL_type)
@@ -3933,4 +3963,5 @@ NIL_type Native_Initialize_M(NIL_type)
 
     /* Ken primitives */
     initialize_ken_id_M();
-    initialize_ken_send_M(); }
+    initialize_ken_send_M();
+    initialize_ken_receive_handler_M(); }
