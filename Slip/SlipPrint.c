@@ -131,6 +131,12 @@ static NIL_type display_false(NIL_type)
 static NIL_type display_force(FRC_type Force)
   { display_rawstring(Force_display_rawstring); }
 
+static NIL_type display_ken_id(KID_type Ken_id)
+  { RWC_type ken_id_buf[22];
+    ken_id_to_string(Ken_id->rwk, ken_id_buf, 22);
+    FORMAT(Ken_id_print_rawstring,
+           ken_id_buf); }
+
 static NIL_type display_native(NAT_type Native)
   { RWS_type rawstring;
     rawstring = Native->nam;
@@ -255,6 +261,9 @@ static NIL_type display_expression(EXP_type Value_expression)
           return;
         case FRC_tag:
           display_force(Value_expression);
+          return;
+        case KID_tag:
+          display_ken_id(Value_expression);
           return;
         case NAT_tag:
           display_native(Value_expression);
