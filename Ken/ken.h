@@ -85,6 +85,15 @@ extern void   ken_free(void * p);
    by ken_malloc() and that could safely be passed to ken_free(). */
 extern int ken_mallocated_pointer(const void * p);
 
+/* Deprecated; avoid use if at all possible.  Set to nonzero iff
+   Ken's persistent heap is ready for use.  This flag is intended for
+   use in C++ code that overloads things like operator new.  We must
+   check to make sure that Ken's heap is ready because constructors
+   in C++ may be called in an uncontrollable order before main() is
+   called, and therefore before Ken's infrastructure is properly
+   initialized. */
+extern int ken_heap_ready;
+
 /* Set and get app_data pointer, entry to persistent heap.  Value
    passed to the set function must be either NULL or a valid address
    on persistent heap.  The app_data pointer is initially NULL.

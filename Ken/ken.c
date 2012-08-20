@@ -124,6 +124,8 @@ static ken_state_blob_t * volatile e_state_blob = NULL;
 static volatile int32_t e_ndirty;
 static int32_t * volatile e_dirtypages;
 
+int ken_heap_ready = 0;
+
 #define CCP(p) ((const char *)(p))
 
 #define PAGE_ALIGNED(p) (0 == (CCP(p) - CCP(0)) % PAGESZ)
@@ -967,6 +969,8 @@ int main(int argc, char *argv[]) {
       KENASRT(0 <= e_state_blob->turn);
       FP2("recovering from turn %" PRId64 "\n", e_state_blob->turn);
     }
+
+    ken_heap_ready = 1;
 
     /* notify child that parent has recovered, wait for child to finish recovery */
     {

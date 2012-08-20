@@ -47,7 +47,8 @@
 /* POSIX 2008 checksum, expressed with <stdint.h> types.  For
    alternatives check out Bob Jenkins, "Murmur Hash".  See also
    DSN 2002 paper by Koopman, which might be origin of cksum in
-   POSIX 2008. */
+   POSIX 2008.  Intel processors offer a "CRC32" instruction
+   that might offer improved performance; investigate (?). */
 
 #include <inttypes.h>
 #include <stddef.h>   /* for size_t */
