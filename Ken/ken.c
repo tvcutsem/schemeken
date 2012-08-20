@@ -104,8 +104,7 @@ typedef struct {
   /* int32_t alignpad[...];   page-align heap (?) try "127" */
   ken_mem_chunk_hdr_t
     * freelist,
-    // tvcutsem: changed 1TB (1024*1024*1024*1024) into 1 MB (1024*1024)
-    heap[((size_t)32 * 1024*1024)/sizeof(ken_mem_chunk_hdr_t)];
+    heap[((size_t)KEN_HEAP_SIZE_MB * 1024*1024)/sizeof(ken_mem_chunk_hdr_t)];
 } ken_state_blob_t;
 
 #define BLOB_BYTES  sizeof(ken_state_blob_t)

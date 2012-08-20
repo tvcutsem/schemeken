@@ -43,10 +43,11 @@
 
 #include "kenerr.h"
 
-#define KEN_MPROTECT_SIG SIGSEGV
-
 #ifdef __APPLE__
-#include "kenosx.h"
+#  include "kenosx.h"
+#else
+#  define KEN_MPROTECT_SIG SIGSEGV
+enum { KEN_HEAP_SIZE_MB = 1024 * 1024 };
 #endif
 
 /* Limits & constants. */
