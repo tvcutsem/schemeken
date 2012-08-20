@@ -279,7 +279,12 @@ EXP_type Main_Reverse(EXP_type List_epression)
 
 NIL_type Main_Set_Expression(EXP_type Expression)
   { Intermediate_expression = Expression; }
-  
+
+NIL_type Main_Receive_Ken_Message(RWK_type sender)
+  { EXP_type expression;
+    expression = Read_Parse_C(Main_Void);
+    Native_Receive_Ken_Message(sender, expression); }
+
 /*----------------------------------- exported functions -------------------------------*/
 
 void Root_Initialize() {
@@ -288,7 +293,7 @@ void Root_Initialize() {
   slipken_persist_init(Root_references,
       slipken_simple_malloc(Root_size * sizeof(ERF_type)));
   NTF(Root_references != NULL);
-	slipken_persist_init(Intermediate_expression, Grammar_Unspecified);
+  slipken_persist_init(Intermediate_expression, Grammar_Unspecified);
 }
 
 void Slip_INIT(char * Memory,

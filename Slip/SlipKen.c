@@ -168,6 +168,7 @@ static FILE * stream;
 /* Imported from SlipMain.c */
 void Slip_INIT(char * Memory, int Size);
 void read_eval_print_C(void);
+void Main_Receive_Ken_Message(kenid_t sender);
 
 short Slip_Close(void)
   { short character;
@@ -273,15 +274,13 @@ int64_t ken_handler(void *msg, int32_t len, kenid_t sender) {
       /* do nothing yet */
     } else {
       /* Message send from a peer */
-      char ken_id_buf[KEN_ID_BUF_SIZE];
-      ken_id_to_string(sender, ken_id_buf, sizeof(ken_id_buf));
-      snprintf(Print_Buffer,
-               Print_Buffer_size,
-               "\nReceived message from %s:\n",
-               ken_id_buf);
-      Slip_Print(Print_Buffer);
-      Slip_Print(msg);
-      Slip_Print("\nMessage end.\n");
+      int slip_pipe[2];
+      pipe(slip_pipe);
+      write(slip_pipe[1], msg, len);
+      close(slip_pipe[1]);
+
+      stream = fdopen(slip_pipe[0], "r");
+      Main_Receive_Ken_Message(sender);
     }
   }
   Slip_Print(Prompt_rawstring);

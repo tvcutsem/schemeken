@@ -3863,6 +3863,7 @@ static NIL_type initialize_ken_send_M(NIL_type)
 /*---------------------------------- ken-receive-handler -------------------------------*/
 
 static const RWS_type krh_rawstring = "ken-receive-handler";
+static UNS_type Receive_handler_offset;
 
 static NIL_type default_receive_handler(FRM_type Argument_frame,
                                         EXP_type Tail_call_expression)
@@ -3887,10 +3888,31 @@ static NIL_type default_receive_handler(FRM_type Argument_frame,
     Main_Set_Expression(Grammar_Unspecified); }
 
 static NIL_type initialize_ken_receive_handler_M(NIL_type)
-  { native_define_M(krh_rawstring,
+  { SYM_type symbol;
+    UNS_type offset;
+    symbol = Pool_Enter_Native_M(krh_rawstring);
+    slipken_persist_init(Receive_handler_offset,
+                         offset);
+    native_define_M(krh_rawstring,
                     default_receive_handler); }
 
 /*--------------------------------------------------------------------------------------*/
+
+NIL_type Native_Receive_Ken_Message(RWK_type sender, EXP_type msg)
+  { KID_type kid;
+    PAI_type arguments;
+    EXP_type procedure_expression;
+    FRM_type frame;
+
+    kid = make_KID_M(sender);
+    arguments = make_PAI_M(msg, Grammar_Null);
+    arguments = make_PAI_M(kid, arguments);
+    frame = Environment_Get_Current_Frame();
+    procedure_expression = Environment_Frame_Get(frame, Receive_handler_offset);
+    Evaluate_Apply_C(procedure_expression,
+                     arguments,
+                     Grammar_True);
+}
 
 NIL_type Native_Initialize_M(NIL_type)
   { initialize_circularity_level_M();
