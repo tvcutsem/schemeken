@@ -110,6 +110,10 @@ UNS_type Environment_Frame_Size(FRM_type Frame)
 FRM_type Environment_Get_Current_Frame(NIL_type)
   { return Current_frame; }
 
+EXP_type Environment_Global_Frame_Get(UNS_type Offset)
+  { return frame_get(Global_frame,
+                     Offset); }
+
 NIL_type Environment_Global_Frame_Set(EXP_type Value_expression,
                                       UNS_type Offset)
   { frame_set(Global_frame,

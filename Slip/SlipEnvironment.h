@@ -20,6 +20,7 @@ NIL_type                    Environment_Frame_Set(FRM_type,
                                                   EXP_type);
 UNS_type                   Environment_Frame_Size(FRM_type);
 FRM_type            Environment_Get_Current_Frame(NIL_type);
+EXP_type             Environment_Global_Frame_Get(UNS_type);
 NIL_type             Environment_Global_Frame_Set(EXP_type,
                                                   UNS_type);
 SYM_type           Environment_Global_Symbol_Name(UNS_type);

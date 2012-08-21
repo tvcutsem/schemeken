@@ -3902,13 +3902,10 @@ NIL_type Native_Receive_Ken_Message(RWK_type sender, EXP_type msg)
   { KID_type kid;
     PAI_type arguments;
     EXP_type procedure_expression;
-    FRM_type frame;
-
     kid = make_KID_M(sender);
     arguments = make_PAI_M(msg, Grammar_Null);
     arguments = make_PAI_M(kid, arguments);
-    frame = Environment_Get_Current_Frame();
-    procedure_expression = Environment_Frame_Get(frame, Receive_handler_offset);
+    procedure_expression = Environment_Global_Frame_Get(Receive_handler_offset);
     Evaluate_Apply_C(procedure_expression,
                      arguments,
                      Grammar_True);
