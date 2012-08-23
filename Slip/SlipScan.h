@@ -15,6 +15,7 @@ typedef enum { CHA_token,                                /* character         */
                EOL_token,                                /* eof               */
                FLS_token,                                /* false             */
                IDT_token,                                /* identifier        */
+               KID_token,                                /* ken id            */
                LPR_token,                                /* left parenthesis  */
                NBR_token,                                /* number            */
                PER_token,                                /* period            */

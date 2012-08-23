@@ -64,8 +64,12 @@ typedef enum { att_allowed = (1<<Att),
                              (1<<Pls)|
                              (1<<Tru),
                lpr_allowed = (1<<Lpr),
+               ltr_allowed = (1<<Ltr),
                per_allowed = (1<<Per),
                quo_allowed = (1<<Quo),
+               rwk_allowed = (1<<Per)|
+                             (1<<Dgt)|
+                             (1<<Opr),
                sgn_allowed = (1<<Mns)|
                              (1<<Pls),
                trm_allowed = (1<<Eol)|
@@ -240,6 +244,16 @@ static SCA_type Hsh_fun(NIL_type)
       return character();
     if (check(lpr_allowed))
       return next_character_return(VEC_token);
+    if (check(ltr_allowed)) {
+      switch (Current_character) {
+        case 'K': case 'k':
+          next_character();
+          while (check(rwk_allowed))
+            copy_and_get_char();
+          stop_copy_text();
+          return KID_token;
+      }
+    }
     return error_and_return(ILH_error); }
 
 static SCA_type Idt_fun(NIL_type)

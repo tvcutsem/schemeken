@@ -10,6 +10,7 @@
                      /*---------------------------------------------*/
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "SlipMain.h"
 
@@ -49,7 +50,7 @@ static NIL_type quote_pattern_C(KEY_type Key)
     PAI_type pair;
     SYM_type symbol;
     next_token();
-		read_expression_C();
+    read_expression_C();
     MAIN_CLAIM_DEFAULT_C();
     expression = Stack_Peek();
     symbol = Pool_Keyword_Symbol(Key);
@@ -59,6 +60,25 @@ static NIL_type quote_pattern_C(KEY_type Key)
                       pair);
     Stack_Poke(pair); }
 
+static BLN_type looks_like_ken_id(RWS_type Rawstring)
+  { UNS_type size;
+    UNS_type r;
+    UNS_type ip[4], port;
+
+    size = strlen(Rawstring);
+    if (KEN_ID_BUF_SIZE < size || 8 > size)
+      return Grammar_Is_False;
+    r = sscanf(Rawstring, "%d.%d.%d.%d:%d", &ip[0], &ip[1], &ip[2], &ip[3], &port);
+    if (r != 5)
+      return Grammar_Is_False;
+    if (   (   0 <= ip[0] &&        256 >  ip[0])
+        && (   0 <= ip[1] &&        256 >  ip[1])
+        && (   0 <= ip[2] &&        256 >  ip[2])
+        && (   0 <= ip[3] &&        256 >  ip[3])
+        && (1024 <= port  && UINT16_MAX >= port))
+        return Grammar_Is_True;
+    return Grammar_Is_False;
+  }
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type read_character_C(NIL_type)
@@ -130,7 +150,7 @@ static NIL_type read_quote_C(NIL_type)
     PAI_type pair;
     SYM_type quote_symbol;
     next_token();
-		read_expression_C();
+    read_expression_C();
     MAIN_CLAIM_DEFAULT_C();
     expression = Stack_Peek();
     quote_symbol = Pool_Keyword_Symbol(Pool_Quote);
@@ -180,6 +200,17 @@ static NIL_type read_vector_C(SCA_type End_token)
     Stack_Collapse_C(count);
     next_token(); }
 
+static NIL_type read_ken_id_C(NIL_type)
+  { RWK_type ken_id;
+    KID_type kid;
+    if (!looks_like_ken_id(Scan_String))
+      read_rawstring_error(NAK_error,
+                           Scan_String);
+    ken_id = ken_id_from_string(Scan_String);
+    MAIN_CLAIM_DYNAMIC_C(sizeof(RWK_type));
+    kid = make_KID_M(ken_id);
+    next_token_and_push_C(kid); }
+
 static NIL_type read_expression_C(NIL_type)
   { switch (Token)
       { case CHA_token:
@@ -193,6 +224,9 @@ static NIL_type read_expression_C(NIL_type)
           return;
         case IDT_token:
           read_symbol_C();
+          return;
+        case KID_token:
+          read_ken_id_C();
           return;
         case LPR_token:
           read_list_C();
@@ -249,9 +283,9 @@ EXP_type Read_Parse_C(RWS_type Input_rawstring)
                            Input_rawstring); */
     Token = Scan_Preset();
     read_expression_C();
-		result = Slip_Close();
-		if (result == 0)
-			read_error(XCT_error);
+    result = Slip_Close();
+    if (result == 0)
+      read_error(XCT_error);
     expression = Stack_Pop();
     return expression; }
 

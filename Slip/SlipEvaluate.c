@@ -2853,6 +2853,7 @@ static NIL_type evaluate_expression_C(EXP_type Expression,
           return;
         case CHA_tag:
         case FLS_tag:
+        case KID_tag:
         case NBR_tag:
         case NUL_tag:
         case REA_tag:
