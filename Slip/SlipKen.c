@@ -273,7 +273,7 @@ int64_t ken_handler(void *msg, int32_t len, kenid_t sender) {
       /* do nothing yet */
     } else {
       /* Message send from a peer */
-      char ken_id_buf[22];
+      char ken_id_buf[KEN_ID_BUF_SIZE];
       ken_id_to_string(sender, ken_id_buf, sizeof(ken_id_buf));
       snprintf(Print_Buffer,
                Print_Buffer_size,

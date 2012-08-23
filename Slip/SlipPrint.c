@@ -35,6 +35,7 @@ static const RWS_type     Empty_list_display_rawstring = "()";
 static const RWS_type          Error_display_rawstring = "display";
 static const RWS_type          False_display_rawstring = "#f";
 static const RWS_type          Force_display_rawstring = "<force>";
+static const RWS_type         Ken_id_display_rawstring = "<ken-id %s>";
 static const RWS_type        Leftpar_display_rawstring = "(";
 static const RWS_type        Leftvec_display_rawstring = "#(";
 static const RWS_type         Native_display_rawstring = "<native %s>";
@@ -61,7 +62,7 @@ static const RWS_type            Error_print_rawstring = "print";
 static const RWS_type            False_print_rawstring = "#f";
 static const RWS_type            Force_print_rawstring = "<force>";
 static const RWS_type          Keyword_print_rawstring = "%s";
-static const RWS_type           Ken_id_print_rawstring = "<ken-id %s>";
+static const RWS_type           Ken_id_print_rawstring = "#k%s";
 static const RWS_type          Leftpar_print_rawstring = "(";
 static const RWS_type          Leftvec_print_rawstring = "#(";
 static const RWS_type           Native_print_rawstring = "<native %s>";
@@ -132,9 +133,9 @@ static NIL_type display_force(FRC_type Force)
   { display_rawstring(Force_display_rawstring); }
 
 static NIL_type display_ken_id(KID_type Ken_id)
-  { RWC_type ken_id_buf[22];
-    ken_id_to_string(Ken_id->rwk, ken_id_buf, 22);
-    FORMAT(Ken_id_print_rawstring,
+  { RWC_type ken_id_buf[KEN_ID_BUF_SIZE];
+    ken_id_to_string(Ken_id->rwk, ken_id_buf, KEN_ID_BUF_SIZE);
+    FORMAT(Ken_id_display_rawstring,
            ken_id_buf); }
 
 static NIL_type display_native(NAT_type Native)
@@ -653,8 +654,8 @@ static NIL_type print_if_single(IFS_type If_single)
     outdent(); }
 
 static NIL_type print_ken_id(KID_type Ken_id)
-  { RWC_type ken_id_buf[22];
-    ken_id_to_string(Ken_id->rwk, ken_id_buf, 22);
+  { RWC_type ken_id_buf[KEN_ID_BUF_SIZE];
+    ken_id_to_string(Ken_id->rwk, ken_id_buf, KEN_ID_BUF_SIZE);
     FORMAT(Ken_id_print_rawstring,
            ken_id_buf); }
 
