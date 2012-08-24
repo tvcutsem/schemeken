@@ -271,7 +271,7 @@ static REA_type make_real_C(RWR_type rawreal,
     real = make_REA_M(rawreal);
     return real; }
 
-static NIL_type native_define_M(RWS_type Rawstring,
+static UNS_type native_define_M(RWS_type Rawstring,
                                 RNF_type Raw_native_function)
   { NAT_type native;
     SYM_type symbol;
@@ -282,7 +282,8 @@ static NIL_type native_define_M(RWS_type Rawstring,
     offset = Compile_Define_Global_Symbol_M(symbol);
     enter_native_name(Rawstring,
                       offset,
-                      native); }
+                      native);
+    return offset; }
 
 static NIL_type require_0_arguments(FRM_type Argument_frame,
                                     RWS_type Message_rawstring)
@@ -3869,7 +3870,6 @@ static NIL_type default_receive_handler(FRM_type Argument_frame,
                                         EXP_type Tail_call_expression)
   { EXP_type argument_expression, kid_expression;
     KID_type kid;
-    RWS_type rawstring;
     require_2_arguments(Argument_frame,
                         &kid_expression,
                         &argument_expression,
@@ -3888,13 +3888,11 @@ static NIL_type default_receive_handler(FRM_type Argument_frame,
     Main_Set_Expression(Grammar_Unspecified); }
 
 static NIL_type initialize_ken_receive_handler_M(NIL_type)
-  { SYM_type symbol;
-    UNS_type offset;
-    symbol = Pool_Enter_Native_M(krh_rawstring);
+  { UNS_type offset;
+    offset = native_define_M(krh_rawstring,
+                             default_receive_handler);
     slipken_persist_init(Receive_handler_offset,
-                         offset);
-    native_define_M(krh_rawstring,
-                    default_receive_handler); }
+                         offset); }
 
 /*--------------------------------------------------------------------------------------*/
 
@@ -3908,7 +3906,8 @@ NIL_type Native_Receive_Ken_Message(RWK_type sender, EXP_type msg)
     procedure_expression = Environment_Global_Frame_Get(Receive_handler_offset);
     Evaluate_Apply_C(procedure_expression,
                      arguments,
-                     Grammar_True);
+                     Grammar_False);
+    Main_Proceed_C();
 }
 
 NIL_type Native_Initialize_M(NIL_type)

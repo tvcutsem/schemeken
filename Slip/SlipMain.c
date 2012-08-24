@@ -91,6 +91,11 @@ static NIL_type initialize_print(NIL_type)
 
 /*--------------------------------------------------------------------------------------*/
 
+NIL_type Main_Proceed_C(NIL_type)
+  { REP_type status;
+    if ((status = setjmp(Exit)) == Initiate_REP)
+      { Thread_Proceed_C(); } }
+
 NIL_type read_eval_print_C(NIL_type)
   { DBL_type consumption;
     EXP_type compiled_expression,

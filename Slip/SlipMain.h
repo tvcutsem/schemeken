@@ -75,3 +75,5 @@ NIL_type           Main_Replace_Vector(VEC_type,
 EXP_type                  Main_Reverse(EXP_type);
 NIL_type           Main_Set_Expression(EXP_type);
 NIL_type             read_eval_print_C(NIL_type);
+NIL_type                Main_Proceed_C(NIL_type);
+
