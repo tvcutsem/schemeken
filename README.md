@@ -3,8 +3,6 @@ schemeken
 
 A Distributed Resilient Scheme Interpreter
 
-More info to come soon.
-
 Roots
 =====
 
@@ -60,6 +58,33 @@ Welcome back!
 
 >>> (fac 5)
 120
+````
+
+Ken makes sure that all heap state is persisted across crashes. In addition, all code evaluated in a single read-eval-print loop session (or in response to an incoming remote message) is treated as an atomic transaction: either all side-effects are persisted, or none are. If the interpreter crashes in the middle of evaluating an expression, it will be restored with the last consistent state before crashing. For example:
+
+````console
+>>> (define x 42)
+42
+>>>(define (loop-forever) (loop-forever))
+<procedure loop-forever>
+>>> (begin (set! x 0) (loop-forever))
+<Kill the interpreter using Ctrl-C while evaluating the infinite loop>
+````
+
+Now restart and check the value of x:
+
+````console
+$ ./schemeken 127.0.0.1:6789
+...
+35534:Ken/ken.c:968: recovering from turn 6
+...
+<hit enter>
+
+Restoring state ...
+Welcome back!
+
+>>> x
+42
 ````
 
 Language features
