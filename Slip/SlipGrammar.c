@@ -33,6 +33,8 @@ enum { Immediate_null_value        = Memory_Void_Value +   0*Memory_Cell_Bias,
        Immediate_character         = Memory_Void_Value +   5*Memory_Cell_Bias,
        Immediate_boundary          = Memory_Void_Value + 260*Memory_Cell_Bias };
 
+enum { Ken_ID_Pool_Size = 32 };
+
 static const RWS_type Empty_rawstring   = "";
 static const RWS_type Newline_rawstring = "\n";
 
@@ -357,11 +359,35 @@ BLN_type is_KID(EXP_type Expression)
   { return member_of(Expression,
                      KID_tag); }
 
+static VEC_type Ken_ID_Pool;
+
 KID_type make_KID_M(RWK_type Rawid)
   { KID_type kid_value;
+    EXP_type exp;
+    UNS_type index;
+    for (index = 1;
+         index <= Ken_ID_Pool_Size;
+         index += 1)
+      { exp = Ken_ID_Pool[index];
+        if (exp == Grammar_Undefined)
+          { kid_value = MAKE_CHUNK_M(KID);
+            kid_value->rwk = Rawid;
+            Ken_ID_Pool[index] = kid_value;
+            return kid_value; }
+        kid_value = (KID_type)exp;
+        if (0 == ken_id_cmp(kid_value->rwk, Rawid))
+          return kid_value; }
     kid_value = MAKE_CHUNK_M(KID);
     kid_value->rwk = Rawid;
     return kid_value; }
+
+NIL_type initialize_Ken_ID_Pool_M()
+  { slipken_persist_init(Ken_ID_Pool, make_VEC_M(Ken_ID_Pool_Size));
+    make_KID_M(ken_id());
+    make_KID_M(kenid_NULL);
+    make_KID_M(kenid_stdout);
+    make_KID_M(kenid_alarm);
+    make_KID_M(kenid_stdin); }
 
 /*----------------------------------- LCA declarations ---------------------------------*/
 
@@ -825,4 +851,5 @@ NIL_type Grammar_Initialize(NIL_type)
     slipken_persist_init(Grammar_True           , make_TRU());
     slipken_persist_init(Grammar_Undefined      , make_UDF());
     slipken_persist_init(Grammar_Unspecified    , make_USP());
-    slipken_persist_init(Grammar_Zero_Number    , make_NBR(0)); }
+    slipken_persist_init(Grammar_Zero_Number    , make_NBR(0));
+    initialize_Ken_ID_Pool_M(); }

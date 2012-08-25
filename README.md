@@ -114,6 +114,5 @@ Schemeken adds two new primitives to make use of Ken's messaging system:
   ````
 
 You can also embed Ken IDs into your scheme program by typing `#k` followed by an IP address/port, for example `#k127.0.0.1:6789`.
-Note that `eq?` currently does not work for Ken IDs.
 
 In coming versions we plan to layer future-type messaging on top of these primitives.

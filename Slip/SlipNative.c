@@ -3812,20 +3812,21 @@ static NIL_type initialize_random_native_M(NIL_type)
 /*--------------------------------------- ken-id ---------------------------------------*/
 
 static const RWS_type kid_rawstring = "ken-id";
-static KID_type my_ken_id;
 
 static NIL_type ken_id_native(FRM_type Argument_frame,
                               EXP_type Tail_call_expression)
-  { require_0_arguments(Argument_frame,
+  { RWK_type rwk;
+    KID_type kid;
+    require_0_arguments(Argument_frame,
                         kid_rawstring);
-    Main_Set_Expression(my_ken_id); }
+    rwk = ken_id();
+    kid = make_KID_M(rwk);
+    Main_Set_Expression(kid); }
 
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type initialize_ken_id_M(NIL_type)
-  { RWK_type kid = ken_id();
-    slipken_persist_init(my_ken_id, make_KID_M(kid));
-    native_define_M(kid_rawstring,
+  { native_define_M(kid_rawstring,
                     ken_id_native); }
 
 /*-------------------------------------- ken-send --------------------------------------*/
