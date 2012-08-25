@@ -237,6 +237,9 @@ YES collect
 YES error
 YES pretty
 YES random
+YES ken-id
+YES ken-alarm-id
+YES ken-send
 
 */
 
@@ -3863,6 +3866,24 @@ static NIL_type initialize_ken_send_M(NIL_type)
 
 /*--------------------------------------------------------------------------------------*/
 
+static const RWS_type kad_rawstring = "ken-alarm-id";
+
+static NIL_type ken_alarm_id_native(FRM_type Argument_frame,
+                                    EXP_type Tail_call_expression)
+  { RWK_type rwk;
+    KID_type kid;
+    require_0_arguments(Argument_frame,
+                        kad_rawstring);
+    rwk = kenid_alarm;
+    kid = make_KID_M(rwk);
+    Main_Set_Expression(kid); }
+
+/*--------------------------------------------------------------------------------------*/
+
+static NIL_type initialize_ken_alarm_id_M(NIL_type)
+  { native_define_M(kad_rawstring,
+                    ken_alarm_id_native); }
+
 NIL_type Native_Initialize_M(NIL_type)
   { initialize_circularity_level_M();
     initialize_add_native_M();
@@ -3934,4 +3955,5 @@ NIL_type Native_Initialize_M(NIL_type)
 
     /* Ken primitives */
     initialize_ken_id_M();
+    initialize_ken_alarm_id_M();
     initialize_ken_send_M(); }
