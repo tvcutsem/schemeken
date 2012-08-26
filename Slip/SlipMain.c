@@ -32,7 +32,7 @@
 
 enum { Minimum_number_of_cells = 4096,
        Print_Buffer_size       = 128,
-       Root_size               = 16 };
+       Root_size               = 17 };
 
 static const RWS_type Prompt_rawstring = "\n>>>";
 
@@ -288,7 +288,6 @@ void Root_Initialize() {
   slipken_persist_init(Root_references,
       slipken_simple_malloc(Root_size * sizeof(ERF_type)));
   NTF(Root_references != NULL);
-	slipken_persist_init(Intermediate_expression, Grammar_Unspecified);
 }
 
 void Slip_INIT(char * Memory,
@@ -304,8 +303,9 @@ void Slip_INIT(char * Memory,
     Memory_Initialize((ADR_type)Memory,
                       total_number_of_cells,
                       tag_boundary);
-    Grammar_Initialize();
     Root_Initialize();
+    Grammar_Initialize();
+    slipken_persist_init(Intermediate_expression, Grammar_Unspecified);
     Pool_Initialize_M();
     Cache_Initialize_M();
     Compile_Initialize();
