@@ -3351,7 +3351,7 @@ static NIL_type force_native_C(FRM_type Argument_frame,
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type initialize_force_native_M(NIL_type)
-  { Continue_force = Thread_Register(continue_force);
+  { slipken_persist_init(Continue_force, Thread_Register(continue_force));
     native_define_M(frc_rawstring,
                     force_native_C); }
 
