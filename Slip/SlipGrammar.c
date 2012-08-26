@@ -387,7 +387,8 @@ NIL_type initialize_Ken_ID_Pool_M()
     make_KID_M(kenid_NULL);
     make_KID_M(kenid_stdout);
     make_KID_M(kenid_alarm);
-    make_KID_M(kenid_stdin); }
+    make_KID_M(kenid_stdin);
+    MAIN_REGISTER(Ken_ID_Pool); }
 
 /*----------------------------------- LCA declarations ---------------------------------*/
 
