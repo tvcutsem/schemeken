@@ -10,6 +10,7 @@
                      /*---------------------------------------------*/
 
 #include <stdio.h>
+#include <stdarg.h>
 
 #include "SlipMain.h"
 
@@ -17,18 +18,12 @@
 #include "SlipPool.h"
 #include "SlipPrint.h"
 
-/*------------------------------------ private macros ----------------------------------*/
-
-#define FORMAT(STRING, VALUE)                                                            \
-  { snprintf(Print_Buffer,                                                               \
-             Print_Buffer_size,                                                          \
-             STRING,                                                                     \
-             VALUE);                                                                     \
-    Slip_Print(Print_Buffer); }
-
 /*----------------------------------- private constants --------------------------------*/
 
-enum { Print_Buffer_size = 128 };
+enum { Print_Buffer_size = 1500 };
+
+typedef va_list VRR_type;
+typedef NIL_type (*FMT_type)(RWS_type, VRR_type);
 
 static const RWS_type   Continuation_display_rawstring = "<continuation>";
 static const RWS_type     Empty_list_display_rawstring = "()";
@@ -89,10 +84,6 @@ static const RWS_type Unquote_splicing_print_rawstring = ",@";
 static const RWS_type         Variable_print_rawstring = "var_%u";
 static const RWS_type     Variable_bis_print_rawstring = "_%u";
 
-/*----------------------------------- private variables --------------------------------*/
-
-static RWC_type Print_Buffer[Print_Buffer_size];
-
 /*----------------------------------- private prototypes -------------------------------*/
 
 static NIL_type display_expression(EXP_type);
@@ -102,6 +93,17 @@ static NIL_type       print_symbol(SYM_type);
 static NIL_type     print_variable(UNS_type,
                                    UNS_type);
 
+static NIL_type format_output_directly(RWS_type,
+                                       VRR_type);
+static NIL_type format_output_diverted(RWS_type,
+                                       VRR_type);
+
+/*----------------------------------- private variables --------------------------------*/
+
+static RWC_type Print_Buffer[Print_Buffer_size];
+static FMT_type Real_format = format_output_directly;
+static UNS_type Diverted_Buffer_Pos;
+
 /*----------------------------------- private functions --------------------------------*/
 
 static NIL_type print_error(BYT_type Error,
@@ -109,10 +111,34 @@ static NIL_type print_error(BYT_type Error,
   { Main_Error_Handler(Error,
                        Rawstring); }
 
+static NIL_type format_output_directly(RWS_type Rawstring,
+                                       VRR_type Varargs)
+  { vsnprintf(Print_Buffer,
+              Print_Buffer_size,
+              Rawstring,
+              Varargs);
+    Slip_Print(Print_Buffer); }
+
+static NIL_type format_output_diverted(RWS_type Rawstring,
+                                       VRR_type Varargs)
+  { UNS_type written;
+    written =
+      vsnprintf(Print_Buffer + Diverted_Buffer_Pos,
+                Print_Buffer_size - Diverted_Buffer_Pos,
+                Rawstring,
+                Varargs);
+    Diverted_Buffer_Pos += written; }
+
+static NIL_type format(RWS_type Rawstring, ...)
+  { VRR_type Varargs;
+    va_start(Varargs, Rawstring);
+    Real_format(Rawstring, Varargs);
+    va_end(Varargs); }
+
 /*--------------------------------private display functions ----------------------------*/
 
 static NIL_type display_rawstring(RWS_type Rawstring)
-  { FORMAT(Rawstring_display_rawstring,
+  { format(Rawstring_display_rawstring,
            Rawstring); }
 
 /*--------------------------------------------------------------------------------------*/
@@ -120,7 +146,7 @@ static NIL_type display_rawstring(RWS_type Rawstring)
 static NIL_type display_character(CHA_type Character)
   { RWC_type rawcharacter;
     rawcharacter = get_CHA(Character);
-    FORMAT(Rawcharacter_display_rawstring,
+    format(Rawcharacter_display_rawstring,
            rawcharacter); }
 
 static NIL_type display_continuation(CNT_type Continuation)
@@ -135,13 +161,13 @@ static NIL_type display_force(FRC_type Force)
 static NIL_type display_ken_id(KID_type Ken_id)
   { RWC_type ken_id_buf[KEN_ID_BUF_SIZE];
     ken_id_to_string(Ken_id->rwk, ken_id_buf, KEN_ID_BUF_SIZE);
-    FORMAT(Ken_id_display_rawstring,
+    format(Ken_id_display_rawstring,
            ken_id_buf); }
 
 static NIL_type display_native(NAT_type Native)
   { RWS_type rawstring;
     rawstring = Native->nam;
-    FORMAT(Native_display_rawstring,
+    format(Native_display_rawstring,
            rawstring); }
 
 static NIL_type display_null(NIL_type)
@@ -150,7 +176,7 @@ static NIL_type display_null(NIL_type)
 static NIL_type display_number(NBR_type Number)
   { RWN_type rawnumber;
     rawnumber = get_NBR(Number);
-    FORMAT(Rawnumber_display_rawstring,
+    format(Rawnumber_display_rawstring,
            rawnumber); }
 
 static NIL_type display_pair(PAI_type Pair)
@@ -185,7 +211,7 @@ static NIL_type display_procedure(PRC_type Procedure)
     RWS_type rawstring;
     name_symbol = Procedure->nam;
     rawstring = name_symbol->rws;
-    FORMAT(Procedure_display_rawstring,
+    format(Procedure_display_rawstring,
            rawstring); }
 
 static NIL_type display_procedure_vararg(PRV_type Procedure_vararg)
@@ -193,7 +219,7 @@ static NIL_type display_procedure_vararg(PRV_type Procedure_vararg)
     RWS_type rawstring;
     name_symbol = Procedure_vararg->nam;
     rawstring = name_symbol->rws;
-    FORMAT(Procedure_display_rawstring,
+    format(Procedure_display_rawstring,
            rawstring); }
 
 static NIL_type display_promise(NIL_type)
@@ -202,13 +228,13 @@ static NIL_type display_promise(NIL_type)
 static NIL_type display_real(REA_type Real)
   { RWR_type rawreal;
     rawreal = Real->rwr;
-    FORMAT(Rawreal_display_rawstring,
+    format(Rawreal_display_rawstring,
            rawreal); }
 
 static NIL_type display_string(STR_type String)
   { RWS_type rawstring;
     rawstring = String->rws;
-    FORMAT(String_display_rawstring,
+    format(String_display_rawstring,
            rawstring); }
 
 static NIL_type display_symbol(SYM_type Symbol)
@@ -334,7 +360,7 @@ static NIL_type outdent(NIL_type)
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type print_rawstring(RWS_type Rawstring)
-  { FORMAT(Rawstring_print_rawstring,
+  { format(Rawstring_print_rawstring,
            Rawstring); }
 
 static NIL_type print_binding_vector(VEC_type Binding_vector)
@@ -368,7 +394,7 @@ static NIL_type print_operand_vector(VEC_type Operand_vector)
   { EXP_type expression;
     UNS_type size,
              index;
- 	  size = size_VEC(Operand_vector);
+    size = size_VEC(Operand_vector);
     for (index = 1;
          index <= size;
          index += 1)
@@ -394,9 +420,9 @@ static NIL_type print_variable(UNS_type Scope,
       { variable_symbol = Environment_Global_Symbol_Name(Offset);
         print_symbol(variable_symbol);
         return; }
-    FORMAT(Variable_print_rawstring,
+    format(Variable_print_rawstring,
            Scope);
-    FORMAT(Variable_bis_print_rawstring,
+    format(Variable_bis_print_rawstring,
            Offset);  }
 
 /*--------------------------------------------------------------------------------------*/
@@ -406,7 +432,7 @@ static NIL_type print_keyword(KEY_type Key)
     RWS_type rawstring;
     symbol = Pool_Keyword_Symbol(Key);
     rawstring = symbol->rws;
-    FORMAT(Keyword_print_rawstring,
+    format(Keyword_print_rawstring,
            rawstring); }
 
 static NIL_type print_and(AND_type And)
@@ -441,7 +467,7 @@ static NIL_type print_begin(BEG_type Begin)
 static NIL_type print_character(CHA_type Character)
   { RWC_type rawcharacter;
     rawcharacter = get_CHA(Character);
-    FORMAT(Rawcharacter_print_rawstring,
+    format(Rawcharacter_print_rawstring,
            rawcharacter); }
 
 static NIL_type print_clauses(VEC_type Predicate_vector,
@@ -450,7 +476,7 @@ static NIL_type print_clauses(VEC_type Predicate_vector,
              predicate_expression;
     UNS_type size,
              index;
- 	  size = size_VEC(Predicate_vector);
+    size = size_VEC(Predicate_vector);
     indent();
     for (index = 1;
          index <= size;
@@ -656,7 +682,7 @@ static NIL_type print_if_single(IFS_type If_single)
 static NIL_type print_ken_id(KID_type Ken_id)
   { RWC_type ken_id_buf[KEN_ID_BUF_SIZE];
     ken_id_to_string(Ken_id->rwk, ken_id_buf, KEN_ID_BUF_SIZE);
-    FORMAT(Ken_id_print_rawstring,
+    format(Ken_id_print_rawstring,
            ken_id_buf); }
 
 static NIL_type print_let(LET_type Let)
@@ -749,7 +775,7 @@ static NIL_type print_local_application(LCA_type Local_application)
 static NIL_type print_native(NAT_type Native)
   { RWS_type rawstring;
     rawstring = Native->nam;
-    FORMAT(Native_print_rawstring,
+    format(Native_print_rawstring,
            rawstring); }
 
 static NIL_type print_null(NIL_type)
@@ -758,7 +784,7 @@ static NIL_type print_null(NIL_type)
 static NIL_type print_number(NBR_type Number)
   { RWN_type rawnumber;
     rawnumber = get_NBR(Number);
-    FORMAT(Rawnumber_print_rawstring,
+    format(Rawnumber_print_rawstring,
            rawnumber); }
 
 static NIL_type print_or(AND_type Or)
@@ -802,7 +828,7 @@ static NIL_type print_procedure(PRC_type Procedure)
     SYM_type name_symbol;
     name_symbol = Procedure->nam;
     rawstring = name_symbol->rws;
-    FORMAT(Procedure_print_rawstring,
+    format(Procedure_print_rawstring,
            rawstring); }
 
 static NIL_type print_procedure_vararg(PRV_type Procedure_vararg)
@@ -810,7 +836,7 @@ static NIL_type print_procedure_vararg(PRV_type Procedure_vararg)
     SYM_type name_symbol;
     name_symbol = Procedure_vararg->nam;
     rawstring = name_symbol->rws;
-    FORMAT(Procedure_print_rawstring,
+    format(Procedure_print_rawstring,
            rawstring); }
 
 static NIL_type print_promise(PRM_type Promise)
@@ -837,7 +863,7 @@ static NIL_type print_unquote_splicing(UQS_type Unquote_splicing)
 static NIL_type print_real(REA_type Real)
   { RWR_type rawreal;
     rawreal = Real->rwr;
-    FORMAT(Rawreal_print_rawstring,
+    format(Rawreal_print_rawstring,
            rawreal); }
 
 static NIL_type print_sequence(SEQ_type Sequence)
@@ -893,13 +919,13 @@ static NIL_type print_set_local(STL_type Set_local)
 static NIL_type print_string(STR_type String)
   { RWS_type rawstring;
     rawstring = String->rws;
-    FORMAT(String_print_rawstring,
+    format(String_print_rawstring,
            rawstring); }
 
 static NIL_type print_symbol(SYM_type Symbol)
   { RWS_type rawstring;
     rawstring = Symbol->rws;
-    FORMAT(Symbol_print_rawstring,
+    format(Symbol_print_rawstring,
            rawstring); }
 
 static NIL_type print_thunk(THK_type Thunk)
@@ -1107,6 +1133,13 @@ NIL_type Print_Print(EXP_type Expression)
   { Indentation = 0;
     Scope = 1;
     print_expression(Expression); }
+
+RWS_type Print_Print_Diverted(EXP_type Expression)
+  { Real_format = format_output_diverted;
+    Diverted_Buffer_Pos = 0;
+    Print_Print(Expression);
+    Real_format = format_output_directly;
+    return Print_Buffer; }
 
 /*--------------------------------------------------------------------------------------*/
 
