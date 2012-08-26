@@ -1978,6 +1978,7 @@ static EXP_type clone_literal_C(EXP_type Literal_expression)
           return cloned_expression;
         case CHA_tag:
         case FLS_tag:
+        case KID_tag:
         case NBR_tag:
         case NUL_tag:
         case REA_tag:
@@ -2328,6 +2329,7 @@ static NIL_type quasiquote_C(BLN_type In_list)
           return;
         case CHA_tag:
         case FLS_tag:
+        case KID_tag:
         case NBR_tag:
         case NUL_tag:
         case REA_tag:
