@@ -3849,12 +3849,9 @@ static NIL_type ken_send_native(FRM_type Argument_frame,
     if (!is_KID(kid_expression))
       native_error(NAK_error,
                    ksd_rawstring);
-    if (!is_STR(argument_expression))
-      native_error(NAS_error,
-                   ksd_rawstring);
     argument = argument_expression;
     kid = kid_expression;
-    rawstring = argument->rws;
+    rawstring = Print_Print_Diverted(argument_expression);
     (void) ken_send(kid->rwk, rawstring, strlen(rawstring));
     Main_Set_Expression(Grammar_Unspecified); }
 
