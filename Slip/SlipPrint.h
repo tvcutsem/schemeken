@@ -11,8 +11,9 @@
 
 /*----------------------------------- public prototypes --------------------------------*/
 
-NIL_type    Print_Display(EXP_type);
-NIL_type      Print_Print(EXP_type);
+RWS_type Print_Print_Diverted(EXP_type);
+NIL_type        Print_Display(EXP_type);
+NIL_type          Print_Print(EXP_type);
 
 /*--------------------------------------------------------------------------------------*/
 
