@@ -800,7 +800,7 @@ static NIL_type print_pair(PAI_type Pair)
              value_expression;
     PAI_type pair;
     TAG_type tag;
-    print_rawstring(Quote_print_rawstring);                 /* only top level */
+    //print_rawstring(Quote_print_rawstring);                 /* only top level */
     print_rawstring(Leftpar_print_rawstring);
     for (pair = Pair;
          ;
