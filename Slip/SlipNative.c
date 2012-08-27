@@ -3897,7 +3897,6 @@ static NIL_type initialize_ken_receive_handler_M(NIL_type)
 
 /*--------------------------------------------------------------------------------------*/
 
-<<<<<<< HEAD
 static const RWS_type kad_rawstring = "ken-alarm-id";
 
 static NIL_type ken_alarm_id_native(FRM_type Argument_frame,
@@ -3915,7 +3914,7 @@ static NIL_type ken_alarm_id_native(FRM_type Argument_frame,
 static NIL_type initialize_ken_alarm_id_M(NIL_type)
   { native_define_M(kad_rawstring,
                     ken_alarm_id_native); }
-=======
+
 NIL_type Native_Receive_Ken_Message(RWK_type sender, EXP_type msg)
   { KID_type kid;
     PAI_type arguments;
@@ -3929,7 +3928,6 @@ NIL_type Native_Receive_Ken_Message(RWK_type sender, EXP_type msg)
                      Grammar_False);
     Main_Proceed_C();
 }
->>>>>>> add-receive
 
 NIL_type Native_Initialize_M(NIL_type)
   { initialize_circularity_level_M();
