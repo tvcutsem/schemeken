@@ -91,6 +91,11 @@ static NIL_type initialize_print(NIL_type)
 
 /*--------------------------------------------------------------------------------------*/
 
+NIL_type Main_Proceed_C(NIL_type)
+  { REP_type status;
+    if ((status = setjmp(Exit)) == Initiate_REP)
+      { Thread_Proceed_C(); } }
+
 NIL_type read_eval_print_C(NIL_type)
   { DBL_type consumption;
     EXP_type compiled_expression,
@@ -279,7 +284,12 @@ EXP_type Main_Reverse(EXP_type List_epression)
 
 NIL_type Main_Set_Expression(EXP_type Expression)
   { Intermediate_expression = Expression; }
-  
+
+NIL_type Main_Receive_Ken_Message(RWK_type sender)
+  { EXP_type expression;
+    expression = Read_Parse_C(Main_Void);
+    Native_Receive_Ken_Message(sender, expression); }
+
 /*----------------------------------- exported functions -------------------------------*/
 
 void Root_Initialize() {

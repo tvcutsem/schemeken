@@ -68,9 +68,12 @@ NIL_type            Main_Error_Handler(BYT_type,
 EXP_type           Main_Get_Expression(NIL_type);
 NIL_type      Main_Reallocate_Vector_M(VRF_type,
                                        UNS_type);
+NIL_type      Main_Receive_Ken_Message(RWK_type);
 NIL_type                Main_Reclaim_C(NIL_type);
 NIL_type           Main_Replace_Vector(VEC_type,
                                        VEC_type);
 EXP_type                  Main_Reverse(EXP_type);
 NIL_type           Main_Set_Expression(EXP_type);
 NIL_type             read_eval_print_C(NIL_type);
+NIL_type                Main_Proceed_C(NIL_type);
+

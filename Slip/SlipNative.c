@@ -274,7 +274,7 @@ static REA_type make_real_C(RWR_type rawreal,
     real = make_REA_M(rawreal);
     return real; }
 
-static NIL_type native_define_M(RWS_type Rawstring,
+static UNS_type native_define_M(RWS_type Rawstring,
                                 RNF_type Raw_native_function)
   { NAT_type native;
     SYM_type symbol;
@@ -285,7 +285,8 @@ static NIL_type native_define_M(RWS_type Rawstring,
     offset = Compile_Define_Global_Symbol_M(symbol);
     enter_native_name(Rawstring,
                       offset,
-                      native); }
+                      native);
+    return offset; }
 
 static NIL_type require_0_arguments(FRM_type Argument_frame,
                                     RWS_type Message_rawstring)
@@ -3861,8 +3862,42 @@ static NIL_type initialize_ken_send_M(NIL_type)
   { native_define_M(ksd_rawstring,
                     ken_send_native); }
 
+/*---------------------------------- ken-receive-handler -------------------------------*/
+
+static const RWS_type krh_rawstring = "ken-receive-handler";
+static UNS_type Receive_handler_offset;
+
+static NIL_type default_receive_handler(FRM_type Argument_frame,
+                                        EXP_type Tail_call_expression)
+  { EXP_type argument_expression, kid_expression;
+    KID_type kid;
+    require_2_arguments(Argument_frame,
+                        &kid_expression,
+                        &argument_expression,
+                        krh_rawstring);
+    if (!is_KID(kid_expression))
+      native_error(NAK_error,
+                   krh_rawstring);
+
+    kid = (KID_type) kid_expression;
+    Slip_Print("Received from ");
+    Print_Display(kid);
+    Slip_Print(": ");
+    Print_Print(argument_expression);
+    Slip_Print("\n");
+
+    Main_Set_Expression(Grammar_Unspecified); }
+
+static NIL_type initialize_ken_receive_handler_M(NIL_type)
+  { UNS_type offset;
+    offset = native_define_M(krh_rawstring,
+                             default_receive_handler);
+    slipken_persist_init(Receive_handler_offset,
+                         offset); }
+
 /*--------------------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
 static const RWS_type kad_rawstring = "ken-alarm-id";
 
 static NIL_type ken_alarm_id_native(FRM_type Argument_frame,
@@ -3880,6 +3915,21 @@ static NIL_type ken_alarm_id_native(FRM_type Argument_frame,
 static NIL_type initialize_ken_alarm_id_M(NIL_type)
   { native_define_M(kad_rawstring,
                     ken_alarm_id_native); }
+=======
+NIL_type Native_Receive_Ken_Message(RWK_type sender, EXP_type msg)
+  { KID_type kid;
+    PAI_type arguments;
+    EXP_type procedure_expression;
+    kid = make_KID_M(sender);
+    arguments = make_PAI_M(msg, Grammar_Null);
+    arguments = make_PAI_M(kid, arguments);
+    procedure_expression = Environment_Global_Frame_Get(Receive_handler_offset);
+    Evaluate_Apply_C(procedure_expression,
+                     arguments,
+                     Grammar_False);
+    Main_Proceed_C();
+}
+>>>>>>> add-receive
 
 NIL_type Native_Initialize_M(NIL_type)
   { initialize_circularity_level_M();
@@ -3953,4 +4003,5 @@ NIL_type Native_Initialize_M(NIL_type)
     /* Ken primitives */
     initialize_ken_id_M();
     initialize_ken_alarm_id_M();
-    initialize_ken_send_M(); }
+    initialize_ken_send_M();
+    initialize_ken_receive_handler_M();  }
