@@ -90,7 +90,7 @@ Welcome back!
 Language features
 =================
 
-As Schemeken is built on the SLIP interpreter, it supports a minimal subset of R5RS.
+As Schemeken is built on the SLIP interpreter, it supports a minimal subset of Scheme.
 Most notable is lack of support for hygienic macros and file I/O procedures.
 See `Slip/SlipNative.c:30` for a list of supported primitives.
 
@@ -105,7 +105,7 @@ Schemeken adds the following primitives to make use of Ken's messaging system:
 
 You can also embed Ken IDs into your scheme program by typing `#k` followed by an IP address/port, for example `#k127.0.0.1:6789`.
 
-* `(ken-send <ken-id> <expr>)`: Sends a message to the given Ken process. Messages are serialized as their printed representation and deserialized as if read by the `(read)` primitive. This means valid messages currently include numbers, booleans, symbols, strings, characters, vectors and lists, but not procedures or continuations.
+* `(ken-send <ken-id> <expr>)`: Sends a value as a message to the given Ken process. Messages are serialized as their printed representation and deserialized as if read by the `(read)` primitive. This means valid messages currently include numbers, booleans, symbols, strings, characters, vectors and lists, but not procedures or continuations.
 
   ````console
   >>> (ken-send (ken-id) "Hello, world")
