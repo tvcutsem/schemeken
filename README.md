@@ -90,11 +90,11 @@ Welcome back!
 Language features
 =================
 
-As Schemeken is built on the SLIP interpreter, it supports a subset of R5RS.
+As Schemeken is built on the SLIP interpreter, it supports a minimal subset of Scheme.
 Most notable is lack of support for hygienic macros and file I/O procedures.
 See `Slip/SlipNative.c:30` for a list of supported primitives.
 
-Schemeken adds two new primitives to make use of Ken's messaging system:
+Schemeken adds the following primitives to make use of Ken's messaging system:
 
 * `(ken-id)`: returns the current Ken ID.
 
@@ -103,7 +103,9 @@ Schemeken adds two new primitives to make use of Ken's messaging system:
   <ken-id 127.0.0.1:6789>
   ````
 
-* `(ken-send <ken-id> <string>)`: Sends a message (currently a string) to the given Ken process.
+You can also embed Ken IDs into your scheme program by typing `#k` followed by an IP address/port, for example `#k127.0.0.1:6789`.
+
+* `(ken-send <ken-id> <expr>)`: Sends a value as a message to the given Ken process. Messages are serialized as their printed representation and deserialized as if read by the `(read)` primitive. This means valid messages currently include numbers, booleans, symbols, strings, characters, vectors and lists, but not procedures or continuations.
 
   ````console
   >>> (ken-send (ken-id) "Hello, world")
@@ -113,6 +115,9 @@ Schemeken adds two new primitives to make use of Ken's messaging system:
   Message end.
   ````
 
-You can also embed Ken IDs into your scheme program by typing `#k` followed by an IP address/port, for example `#k127.0.0.1:6789`.
+* `(set! ken-receive-handler (lambda (id msg) <expr>))`: the global variable `ken-receive-handler` points to a procedure that processes incoming messages. The procedure takes as first argument the ken-id of the sender and as second argument the deserialized message. `<expr>` is evaluated as a separate "turn", and thus thanks to Ken as an "ACID" transaction. The default receive handler just displays the `id` and `msg` on the console.
 
-In coming versions we plan to layer future-type messaging on top of these primitives.
+Future work
+===========
+
+In coming versions we plan to layer a more elaborate messaging system on top of the Ken primitives, such as asynchronous messages with promises (non-blocking futures).
