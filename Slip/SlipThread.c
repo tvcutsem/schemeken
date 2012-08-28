@@ -68,6 +68,23 @@ static NIL_type flush_thread(NIL_type)
          Current_thread = next_thread)
       { next_thread = Current_thread->thr;
         release_thread(Current_thread); }}
+        
+static NIL_type mark_thread(THR_type Thread)
+  { EXP_type expression;
+    TAG_type tag;
+    UNS_type index,
+             size;
+    VEC_type thread_vector;
+    thread_vector = (VEC_type)Thread;
+    apply_MRK(thread_vector);
+    size = size_VEC(thread_vector);
+    for (index = 4;
+         index <= size;
+         index += 1)
+      { expression = thread_vector[index];
+        tag = Grammar_Tag(expression);
+        if (tag == VEC_tag)
+          apply_MRK(expression); } }    
 
 static NIL_type release_thread(THR_type Thread)
   { VEC_type thread_vector;
@@ -85,7 +102,7 @@ THR_type Thread_Mark(NIL_type)
     for (thread = Current_thread;
          !is_NUL(thread);
          thread = thread->thr)
-      apply_MRK(thread);
+      mark_thread(thread);
     return Current_thread; }
 
 THR_type Thread_Patch_C(NBR_type Thread_id_number)
