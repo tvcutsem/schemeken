@@ -3915,10 +3915,31 @@ static NIL_type initialize_ken_alarm_id_M(NIL_type)
   { native_define_M(kad_rawstring,
                     ken_alarm_id_native); }
 
+
+/*-----------------------------------ken-receive----------------------------------------*/
+
+static NBR_type Continue_ken_receive;
+
+THREAD_BEGIN_FRAME(Rec);
+THREAD_END_FRAME(Rec);
+
+/*--------------------------------------------------------------------------------------*/
+
+static NIL_type continue_ken_receive()
+  { Main_Exit(); }
+
+static NIL_type initialize_ken_receive(NIL_type)
+  { slipken_persist_init(Continue_ken_receive, Thread_Register(continue_ken_receive)); }
+
+/*--------------------------------------------------------------------------------------*/
+
 NIL_type Native_Receive_Ken_Message(RWK_type sender, EXP_type msg)
   { KID_type kid;
     PAI_type arguments;
     EXP_type procedure_expression;
+    Thread_Push_C(Continue_ken_receive,
+                  Grammar_False,
+                  Rec_size);
     kid = make_KID_M(sender);
     arguments = make_PAI_M(msg, Grammar_Null);
     arguments = make_PAI_M(kid, arguments);
@@ -3926,8 +3947,9 @@ NIL_type Native_Receive_Ken_Message(RWK_type sender, EXP_type msg)
     Evaluate_Apply_C(procedure_expression,
                      arguments,
                      Grammar_False);
-    Main_Proceed_C();
-}
+    Main_Proceed_C(); }
+
+
 
 NIL_type Native_Initialize_M(NIL_type)
   { initialize_circularity_level_M();
@@ -4002,4 +4024,5 @@ NIL_type Native_Initialize_M(NIL_type)
     initialize_ken_id_M();
     initialize_ken_alarm_id_M();
     initialize_ken_send_M();
-    initialize_ken_receive_handler_M();  }
+    initialize_ken_receive_handler_M();
+    initialize_ken_receive();  }

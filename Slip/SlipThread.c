@@ -173,7 +173,7 @@ static NIL_type initialize_thread_manipulation(NIL_type)
 
 /*----------------------------------- private constants --------------------------------*/
 
-enum { Thread_procedure_table_size  = 28 };
+enum { Thread_procedure_table_size  = 29 };
 
 /*----------------------------------- private variables --------------------------------*/
 

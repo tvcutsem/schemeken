@@ -95,6 +95,10 @@ NIL_type Main_Proceed_C(NIL_type)
   { REP_type status;
     if ((status = setjmp(Exit)) == Initiate_REP)
       { Thread_Proceed_C(); } }
+      
+NIL_type Main_Exit(NIL_type)
+  { longjmp(Exit,
+            Terminate_REP); }
 
 NIL_type read_eval_print_C(NIL_type)
   { DBL_type consumption;
