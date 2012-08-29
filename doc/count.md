@@ -1,5 +1,5 @@
-Take-a-number example application
-=================================
+Take-a-number tutorial
+======================
 
 The take-a-number application is a simple demo application to show off some features of Ken. It is based on the same example application found in the original Ken distribution.
 
@@ -54,6 +54,7 @@ Initializing...
 Loading file 'doc/count-client.scm'...
 <procedure anonymous>
 >>>
+```
 
 ```console
 $ ./schemeken 127.0.0.1:6669 doc/count-serve.scm
