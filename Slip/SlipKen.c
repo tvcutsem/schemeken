@@ -239,7 +239,7 @@ void evaluate_file(const char * filename) {
 
 int64_t ken_handler(void *msg, int32_t len, kenid_t sender) {
   struct Slipken_data * slipken_data = ken_get_app_data();
-  if (NULL == msg || NULL == slipken_data) {
+  if (0 == ken_id_cmp(sender, kenid_NULL) || NULL == slipken_data) {
     fprintf(stderr, "Initializing...\n");
     slipken_data = create_slipken_data();
     Memory = slipken_data->Memory;
@@ -271,7 +271,7 @@ int64_t ken_handler(void *msg, int32_t len, kenid_t sender) {
 
       save_slipken_data(slipken_data);
     } else if (0 == ken_id_cmp(sender, kenid_alarm)) {
-      /* do nothing yet */
+      Main_Receive_Ken_Message(sender);
     } else {
       /* Message send from a peer */
       int slip_pipe[2];

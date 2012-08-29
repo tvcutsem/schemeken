@@ -287,7 +287,10 @@ NIL_type Main_Set_Expression(EXP_type Expression)
 
 NIL_type Main_Receive_Ken_Message(RWK_type sender)
   { EXP_type expression;
-    expression = Read_Parse_C(Main_Void);
+    if (0 == ken_id_cmp(sender, kenid_alarm))
+      expression = Grammar_Unspecified;
+    else
+      expression = Read_Parse_C(Main_Void);
     Native_Receive_Ken_Message(sender, expression); }
 
 /*----------------------------------- exported functions -------------------------------*/
