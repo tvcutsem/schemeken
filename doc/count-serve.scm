@@ -6,11 +6,12 @@
 ; Crashing the application and restarting it should not affect the count.
 ; This application should not send messages to itself.
 
-(define count 0)
+(begin
+ (define count 0)
 
-(define (inc-count)
+ (define (inc-count)
   (set! count (+ count 1)))
 
-(set! ken-receive-handler
-  (lambda (id ignore)
-    (ken-send id (inc-count))))
+ (set! ken-receive-handler
+  (lambda (client-id ignore)
+   (ken-send client-id (inc-count)))))

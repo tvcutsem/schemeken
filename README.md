@@ -87,6 +87,8 @@ Welcome back!
 42
 ````
 
+For a more elaborate tutorial on Schemeken's features, check out the [take-a-number tutorial](https://github.com/tvcutsem/schemeken/blob/master/doc/count.md).
+
 Language features
 =================
 
