@@ -123,3 +123,16 @@ Future work
 ===========
 
 In coming versions we plan to layer a more elaborate messaging system on top of the Ken primitives, such as asynchronous messages with promises (non-blocking futures).
+
+Team
+====
+
+Schemeken was developed at the [Software Languages Lab](http://soft.vub.ac.be), Vrije Universiteit Brussel.
+
+Questions? Contact us!
+
+  - [Dries Harnie](mailto://dharnie@vub.ac.be)
+  - [Joeri De Koster](mailto://jdekoste@vub.ac.be)
+  - [Tom Van Cutsem](mailto://tvcutsem@vub.ac.be)
+
+Schemeken is based on SLIP, a Scheme interpreter written by Prof. Theo D'Hondt.
