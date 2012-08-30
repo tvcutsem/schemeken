@@ -461,7 +461,8 @@ static NIL_type initialize_native(NIL_type)
 /*--------------------------------------- procedure ------------------------------------*/
 /*--------------------------------------------------------------------------------------*/
 
-static NBR_type Continue_procedure_number;
+static NBR_type Continue_procedure_number,
+                Continue_direct_procedure_number;
 
 THREAD_BEGIN_FRAME(Prc);
   THREAD_FRAME_SLOT(PRC, prc);
@@ -469,6 +470,10 @@ THREAD_BEGIN_FRAME(Prc);
   THREAD_FRAME_SLOT(FRM, frm);
   THREAD_FRAME_SLOT(NBR, pos);
 THREAD_END_FRAME(Prc);
+
+THREAD_BEGIN_FRAME(Prd);
+  THREAD_FRAME_SLOT(FRM, frm);
+THREAD_END_FRAME(Prd);
 
 /*--------------------------------------------------------------------------------------*/
 
@@ -517,6 +522,18 @@ static NIL_type procedure_body_with_push_C(FRM_type Frame,
     procedure_body_C(Frame); }
 
 /*--------------------------------------------------------------------------------------*/
+
+static NIL_type continue_direct_procedure_C(NIL_type)
+  { Prd_type direct_procedure_thread;
+    EXP_type tail_call_expression;
+    FRM_type frame;
+    THR_type thread;
+    thread = Thread_Peek();
+    direct_procedure_thread = (Prd_type)thread;
+    frame = direct_procedure_thread->frm;
+    tail_call_expression = Thread_Tail_Position();
+    procedure_body_with_poke_C(frame,
+                               tail_call_expression); }
 
 static NIL_type continue_procedure_C(NIL_type)
   { Prc_type procedure_thread;
@@ -575,12 +592,14 @@ static NIL_type continue_procedure_C(NIL_type)
 static NIL_type apply_direct_procedure_C(PRC_type Procedure,
                                          EXP_type Argument_expression,
                                          EXP_type Tail_call_expression)
-  { EXP_type value_expression;
+  { Prd_type direct_procedure_thread;
+    EXP_type value_expression;
     FRM_type frame;
     NBR_type frame_size_number,
              parameter_count_number;
     PAI_type argument_list_pair;
     TAG_type tag;
+    THR_type thread;
     UNS_type frame_size,
              parameter_count,
              position;
@@ -616,12 +635,18 @@ static NIL_type apply_direct_procedure_C(PRC_type Procedure,
       evaluation_procedure_error(TMO_error,
                                  Procedure);
     Main_Set_Expression(Procedure);
-    procedure_body_with_push_C(frame,
-                               Tail_call_expression); }
+    BEGIN_PROTECT(frame)
+      thread = Thread_Push_C(Continue_direct_procedure_number,
+                             Tail_call_expression,
+                             Prd_size);
+    END_PROTECT(frame)
+    direct_procedure_thread = (Prd_type)thread;
+    direct_procedure_thread->frm = frame; }
 
 static NIL_type apply_procedure_C(VEC_type Operand_vector,
                                   EXP_type Tail_call_expression)
   { Prc_type procedure_thread;
+    Prd_type direct_procedure_thread;
     EXP_type expression,
              tail_call_expression;
     FRM_type frame;
@@ -646,43 +671,47 @@ static NIL_type apply_procedure_C(VEC_type Operand_vector,
     if (parameter_count < operand_vector_size)
       evaluation_procedure_error(TMO_error,
                                  procedure);
-    if (parameter_count == 0)
-      { frame = Environment_Make_Frame_C(frame_size);
-        procedure_body_with_push_C(frame,
-                                   Tail_call_expression);
-        return; }
     BEGIN_PROTECT(Operand_vector)
-      Thread_Push_C(Continue_procedure_number,
-                    Tail_call_expression,
-                    Prc_size);
       frame = Environment_Make_Frame_C(frame_size);
     END_PROTECT(Operand_vector)
-    procedure = Main_Get_Expression();
     position = direct_expressions(Operand_vector,
                                   frame,
                                   1);
-    if (position > 0)
-      { position_number = make_NBR(position);
-        thread = Thread_Peek();
-        procedure_thread = (Prc_type)thread;
-        procedure_thread->prc = procedure;
-        procedure_thread->opd = Operand_vector;
-        procedure_thread->frm = frame;
-        procedure_thread->pos = position_number;
-        expression = Operand_vector[position];
-        tail_call_expression = (position < parameter_count)
-                                 ? Grammar_False
-                                 : Tail_call_expression;
-        evaluate_expression_C(expression,
-                              tail_call_expression);
+    if (position == 0)
+      { BEGIN_PROTECT(frame)
+          thread = Thread_Push_C(Continue_direct_procedure_number,
+                                 Tail_call_expression,
+                                 Prd_size);
+        END_PROTECT(frame)
+        direct_procedure_thread = (Prd_type)thread;
+        direct_procedure_thread->frm = frame;
         return; }
-    procedure_body_with_poke_C(frame,
-                               Tail_call_expression); }
+    BEGIN_DOUBLE_PROTECT(Operand_vector,
+                         frame)
+      thread = Thread_Push_C(Continue_procedure_number,
+                             Tail_call_expression,
+                             Prc_size);
+    END_DOUBLE_PROTECT(Operand_vector,
+                       frame)
+    procedure = Main_Get_Expression();
+    position_number = make_NBR(position);
+    procedure_thread = (Prc_type)thread;
+    procedure_thread->prc = procedure;
+    procedure_thread->opd = Operand_vector;
+    procedure_thread->frm = frame;
+    procedure_thread->pos = position_number;
+    expression = Operand_vector[position];
+    tail_call_expression = (position < parameter_count)
+                             ? Grammar_False
+                             : Tail_call_expression;
+    evaluate_expression_C(expression,
+                          tail_call_expression); }
 
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type initialize_procedure(NIL_type)
-  { Continue_procedure_number = Thread_Register(continue_procedure_C); }
+  { Continue_procedure_number = Thread_Register(continue_procedure_C);
+    Continue_direct_procedure_number = Thread_Register(continue_direct_procedure_C); }
 
 /*--------------------------------------------------------------------------------------*/
 /*------------------------------------ procedure vararg --------------------------------*/
