@@ -166,8 +166,6 @@ static int counter;
 static FILE * stream;
 
 /* Imported from SlipMain.c */
-void Slip_INIT(char * Memory, int Size);
-void read_eval_print_C(void);
 void Main_Receive_Ken_Message(kenid_t sender);
 
 short Slip_Close(void)
@@ -233,7 +231,7 @@ void evaluate_file(const char * filename) {
     fprintf(stderr, "Could not load file '%s': %s\n", filename, strerror(errno));
   } else {
     fprintf(stderr, "Loading file '%s'...\n", filename);
-    read_eval_print_C();
+    Slip_REP();
   }
 }
 
@@ -243,8 +241,7 @@ int64_t ken_handler(void *msg, int32_t len, kenid_t sender) {
     fprintf(stderr, "Initializing...\n");
     slipken_data = create_slipken_data();
     Memory = slipken_data->Memory;
-    Slip_INIT(Memory, Memory_size);
-
+    Slip_Init(Memory, Memory_size);
     if (ken_argc() > 2) {
       const char * filename = ken_argv(2);
       evaluate_file(filename);
@@ -267,8 +264,7 @@ int64_t ken_handler(void *msg, int32_t len, kenid_t sender) {
       close(slip_pipe[1]);
 
       stream = fdopen(slip_pipe[0], "r");
-      read_eval_print_C();
-
+      Slip_REP();
       save_slipken_data(slipken_data);
     } else if (0 == ken_id_cmp(sender, kenid_alarm)) {
       Main_Receive_Ken_Message(sender);

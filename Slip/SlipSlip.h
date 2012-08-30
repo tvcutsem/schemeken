@@ -91,5 +91,7 @@ char   Slip_Read(void );
 
 /*----------------------------------- public prototypes --------------------------------*/
 
-void    Slip_REP(char*,
-                 int  );
+void    Slip_Init(char*,
+                  int  );
+
+void     Slip_REP(void );

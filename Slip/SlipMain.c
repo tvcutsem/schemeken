@@ -99,83 +99,6 @@ NIL_type Main_Proceed_C(NIL_type)
 NIL_type Main_Exit(NIL_type)
   { longjmp(Exit,
             Terminate_REP); }
-
-NIL_type read_eval_print_C(NIL_type)
-  { DBL_type consumption;
-    EXP_type compiled_expression,
-             expression;
-    REP_type status;
-    RWL_type start_time,
-             ticks;
-    RWR_type raw_time;
-    UNS_type collect_count;
-    start_time = clock();
-    Dictionary_Checkpoint();
-    for (UNS_type tag = AND_tag;
-         tag <= USP_tag;
-         tag++)
-      tag_count[tag] = 0;
-    dcount = ndcount = ntcount = tcount = 0;
-    if ((status = setjmp(Exit)) == Initiate_REP)
-      { Thread_Push_C(Continue_read_eval_print_number,
-                      Grammar_False,
-                      Rep_size);
-        expression = Read_Parse_C(Main_Void);
-        compiled_expression = Compile_Compile_C(expression);
-        Evaluate_Eval_C(compiled_expression,
-                        Grammar_False);
-        Thread_Proceed_C(); }
-    ticks = clock();
-    ticks -= start_time;
-    raw_time = (RWR_type)ticks/CLOCKS_PER_SEC;
-    snprintf(Print_Buffer,  
-             Print_Buffer_size, 
-             "elapsed   = %9.6f seconds", 
-             raw_time);
-    Slip_Log(Print_Buffer);
-    consumption = Memory_Consumption();
-    snprintf(Print_Buffer,  
-             Print_Buffer_size, 
-             "consumed  = %9.6f Mcells", 
-             consumption / 1000000);
-    Slip_Log(Print_Buffer);
-    collect_count = Memory_Collect_Count();
-    snprintf(Print_Buffer,  
-             Print_Buffer_size, 
-             "collected = %9d times", 
-             collect_count);
-    Slip_Log(Print_Buffer);
-    Slip_Log("tag frequency:");
-    for (UNS_type tag = AND_tag;
-         tag <= USP_tag;
-         tag++)
-      if (tag_count[tag] > 0)
-        { snprintf(Print_Buffer,  
-                   Print_Buffer_size, 
-                   "tag = %2d - count = %4d", 
-                   tag, 
-                   tag_count[tag]);
-          Slip_Log(Print_Buffer); }
-    snprintf(Print_Buffer,  
-             Print_Buffer_size, 
-             "ndcount = %8d", 
-             ndcount);
-    Slip_Log(Print_Buffer);
-    snprintf(Print_Buffer,  
-             Print_Buffer_size, 
-             "dcount  = %8d", 
-             dcount);
-    Slip_Log(Print_Buffer);
-    snprintf(Print_Buffer,  
-             Print_Buffer_size, 
-             "ntcount = %8d", 
-             ntcount);
-    Slip_Log(Print_Buffer);
-    snprintf(Print_Buffer,  
-             Print_Buffer_size, 
-             "tcount  = %8d", 
-             tcount);
-    Slip_Log(Print_Buffer); }
     
 static NIL_type vector_copy(VEC_type Old_vector,
                             VEC_type New_vector)
@@ -299,15 +222,15 @@ NIL_type Main_Receive_Ken_Message(RWK_type sender)
 
 /*----------------------------------- exported functions -------------------------------*/
 
-void Root_Initialize() {
+static void Root_Initialize() {
   slipken_persist_init(Root_counter, 0);
   slipken_persist_init(Root_vector, make_VEC_M(Root_size));
   slipken_persist_init(Root_references,
-      slipken_simple_malloc(Root_size * sizeof(ERF_type)));
+  slipken_simple_malloc(Root_size * sizeof(ERF_type)));
   NTF(Root_references != NULL);
 }
 
-void Slip_INIT(char * Memory,
+void Slip_Init(char * Memory,
                int    Size)
   { UNS_type tag_boundary,
              total_number_of_cells;
@@ -337,8 +260,81 @@ void Slip_INIT(char * Memory,
     initialize_print();
     MAIN_REGISTER(Grammar_Empty_Vector);
     MAIN_REGISTER(Grammar_Newline_String);
-    MAIN_REGISTER(Intermediate_expression);
-/*    Slip_Print("cpSlip/c version 13: completion and optimization");*/
-/*    for (;;)*/
-/*      read_eval_print_C();*/
-    }
+    MAIN_REGISTER(Intermediate_expression); }
+    
+NIL_type Slip_REP(NIL_type)
+  { DBL_type consumption;
+    EXP_type compiled_expression,
+             expression;
+    REP_type status;
+    RWL_type start_time,
+             ticks;
+    RWR_type raw_time;
+    UNS_type collect_count;
+    start_time = clock();
+    Dictionary_Checkpoint();
+    for (UNS_type tag = AND_tag;
+         tag <= USP_tag;
+         tag++)
+      tag_count[tag] = 0;
+    dcount = ndcount = ntcount = tcount = 0;
+    if ((status = setjmp(Exit)) == Initiate_REP)
+      { Thread_Push_C(Continue_read_eval_print_number,
+                      Grammar_False,
+                      Rep_size);
+        expression = Read_Parse_C(Main_Void);
+        compiled_expression = Compile_Compile_C(expression);
+        Evaluate_Eval_C(compiled_expression,
+                        Grammar_False);
+        Thread_Proceed_C(); }
+    ticks = clock();
+    ticks -= start_time;
+    raw_time = (RWR_type)ticks/CLOCKS_PER_SEC;
+    snprintf(Print_Buffer,  
+             Print_Buffer_size, 
+             "elapsed   = %9.6f seconds", 
+             raw_time);
+    Slip_Log(Print_Buffer);
+    consumption = Memory_Consumption();
+    snprintf(Print_Buffer,  
+             Print_Buffer_size, 
+             "consumed  = %9.6f Mcells", 
+             consumption / 1000000);
+    Slip_Log(Print_Buffer);
+    collect_count = Memory_Collect_Count();
+    snprintf(Print_Buffer,  
+             Print_Buffer_size, 
+             "collected = %9d times", 
+             collect_count);
+    Slip_Log(Print_Buffer);
+    Slip_Log("tag frequency:");
+    for (UNS_type tag = AND_tag;
+         tag <= USP_tag;
+         tag++)
+      if (tag_count[tag] > 0)
+        { snprintf(Print_Buffer,  
+                   Print_Buffer_size, 
+                   "tag = %2d - count = %4d", 
+                   tag, 
+                   tag_count[tag]);
+          Slip_Log(Print_Buffer); }
+    snprintf(Print_Buffer,  
+             Print_Buffer_size, 
+             "ndcount = %8d", 
+             ndcount);
+    Slip_Log(Print_Buffer);
+    snprintf(Print_Buffer,  
+             Print_Buffer_size, 
+             "dcount  = %8d", 
+             dcount);
+    Slip_Log(Print_Buffer);
+    snprintf(Print_Buffer,  
+             Print_Buffer_size, 
+             "ntcount = %8d", 
+             ntcount);
+    Slip_Log(Print_Buffer);
+    snprintf(Print_Buffer,  
+             Print_Buffer_size, 
+             "tcount  = %8d", 
+             tcount);
+    Slip_Log(Print_Buffer); }

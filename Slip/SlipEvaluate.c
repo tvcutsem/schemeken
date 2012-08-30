@@ -158,7 +158,7 @@ static NIL_type push_environment_and_frame_C(NIL_type)
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type initialize_body(NIL_type)
-  { Continue_body_number = Thread_Register(continue_body); }
+  { slipken_persist_init(Continue_body_number, Thread_Register(continue_body)); }
 
 /*--------------------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------------------*/
@@ -249,7 +249,7 @@ static NIL_type apply_direct_continuation(CNT_type Continuation,
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type initialize_continuation(NIL_type)
-  { Continue_continuation_number = Thread_Register(continue_continuation); }
+  { slipken_persist_init(Continue_continuation_number, Thread_Register(continue_continuation)); }
 
 /*--------------------------------------------------------------------------------------*/
 /*---------------------------------------- native --------------------------------------*/
@@ -455,7 +455,7 @@ static NIL_type apply_native_C(VEC_type Operand_vector,
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type initialize_native(NIL_type)
-  { Continue_native_number = Thread_Register(continue_native_C); }
+  { slipken_persist_init(Continue_native_number, Thread_Register(continue_native_C)); }
 
 /*--------------------------------------------------------------------------------------*/
 /*--------------------------------------- procedure ------------------------------------*/
@@ -710,8 +710,8 @@ static NIL_type apply_procedure_C(VEC_type Operand_vector,
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type initialize_procedure(NIL_type)
-  { Continue_procedure_number = Thread_Register(continue_procedure_C);
-    Continue_direct_procedure_number = Thread_Register(continue_direct_procedure_C); }
+  { slipken_persist_init(Continue_procedure_number, Thread_Register(continue_procedure_C));
+    slipken_persist_init(Continue_direct_procedure_number, Thread_Register(continue_direct_procedure_C)); }
 
 /*--------------------------------------------------------------------------------------*/
 /*------------------------------------ procedure vararg --------------------------------*/
@@ -991,8 +991,8 @@ static NIL_type apply_procedure_vararg_C(VEC_type Operand_vector,
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type initialize_procedure_vararg(NIL_type)
-  { Continue_procedure_vararg_number = Thread_Register(continue_procedure_vararg_C);
-    Continue_vararg_number = Thread_Register(continue_vararg_C); }
+  { slipken_persist_init(Continue_procedure_vararg_number, Thread_Register(continue_procedure_vararg_C));
+    slipken_persist_init(Continue_vararg_number, Thread_Register(continue_vararg_C)); }
 
 /*--------------------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------------------*/
@@ -1083,7 +1083,7 @@ static NIL_type evaluate_and_C(EXP_type Tail_call_expression)
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type initialize_and(NIL_type)
-  { Continue_and_number = Thread_Register(continue_and_C); }
+  { slipken_persist_init(Continue_and_number, Thread_Register(continue_and_C)); }
 
 /*--------------------------------------------------------------------------------------*/
 /*------------------------------------- application ------------------------------------*/
@@ -1196,7 +1196,7 @@ static NIL_type evaluate_application_C(EXP_type Tail_call_expression)
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type initialize_application(NIL_type)
-  { Continue_application_number = Thread_Register(continue_application_C); }
+  { slipken_persist_init(Continue_application_number, Thread_Register(continue_application_C)); }
 
 /*--------------------------------------------------------------------------------------*/
 /*---------------------------------------- begin ---------------------------------------*/
@@ -1392,8 +1392,8 @@ static NIL_type evaluate_cond_else_C(EXP_type Tail_call_expression)
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type initialize_cond(NIL_type)
-  { Continue_cond_number = Thread_Register(continue_cond_C);
-    Continue_cond_else_number = Thread_Register(continue_cond_else_C); }
+  { slipken_persist_init(Continue_cond_number, Thread_Register(continue_cond_C));
+    slipken_persist_init(Continue_cond_else_number, Thread_Register(continue_cond_else_C)); }
 
 /*--------------------------------------------------------------------------------------*/
 /*---------------------------------------- define --------------------------------------*/
@@ -1524,7 +1524,7 @@ static NIL_type evaluate_define_variable_C(EXP_type Tail_call_expression)
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type initialize_define_variable(NIL_type)
-  { Continue_define_variable_number = Thread_Register(continue_define_variable); }
+  { slipken_persist_init(Continue_define_variable_number, Thread_Register(continue_define_variable)); }
 
 /*--------------------------------------------------------------------------------------*/
 /*---------------------------------------- delay ---------------------------------------*/
@@ -1724,8 +1724,8 @@ static NIL_type evaluate_if_single_C(EXP_type Tail_call_expression)
                           Grammar_False); }
 
 static NIL_type initialize_if(NIL_type)
-  { Continue_if_double_number = Thread_Register(continue_if_double_C);
-    Continue_if_single_number = Thread_Register(continue_if_single_C); }
+  { slipken_persist_init(Continue_if_double_number, Thread_Register(continue_if_double_C));
+    slipken_persist_init(Continue_if_single_number, Thread_Register(continue_if_single_C)); }
 
 /*--------------------------------------------------------------------------------------*/
 /*---------------------------------------- lambda --------------------------------------*/
@@ -1916,7 +1916,7 @@ static NIL_type evaluate_let_C(EXP_type Tail_call_expression)
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type initialize_let(NIL_type)
-  { Continue_let_number = Thread_Register(continue_let_C); }
+  { slipken_persist_init(Continue_let_number, Thread_Register(continue_let_C)); }
 
 /*--------------------------------------------------------------------------------------*/
 /*-------------------------------------- literals --------------------------------------*/
@@ -2167,7 +2167,7 @@ static NIL_type evaluate_or_C(EXP_type Tail_call_expression)
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type initialize_or(NIL_type)
-  { Continue_or_number = Thread_Register(continue_or_C); }
+  { slipken_persist_init(Continue_or_number, Thread_Register(continue_or_C)); }
 
 /*--------------------------------------------------------------------------------------*/
 /*------------------------------------- quasiquote -------------------------------------*/
@@ -2382,9 +2382,9 @@ static NIL_type evaluate_quasiquote(EXP_type Tail_call_expression)
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type initialize_quasiquote(NIL_type)
-  { Continue_quasiquote_list_number = Thread_Register(continue_quasiquote_list_C);
-    Continue_quasiquote_tail_number = Thread_Register(continue_quasiquote_tail_C);
-    Continue_unquote_splicing_number = Thread_Register(continue_unquote_splicing_C); }
+  { slipken_persist_init(Continue_quasiquote_list_number, Thread_Register(continue_quasiquote_list_C));
+    slipken_persist_init(Continue_quasiquote_tail_number, Thread_Register(continue_quasiquote_tail_C));
+    slipken_persist_init(Continue_unquote_splicing_number, Thread_Register(continue_unquote_splicing_C)); }
 
 /*--------------------------------------------------------------------------------------*/
 /*--------------------------------------- sequence -------------------------------------*/
@@ -2463,7 +2463,7 @@ static NIL_type evaluate_sequence_C(EXP_type Tail_call_expression)
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type initialize_sequence(NIL_type)
-  { Continue_sequence_number = Thread_Register(continue_sequence_C); }
+  { slipken_persist_init(Continue_sequence_number, Thread_Register(continue_sequence_C)); }
 
 /*--------------------------------------------------------------------------------------*/
 /*-------------------------------------- set global ------------------------------------*/
@@ -2537,7 +2537,7 @@ static NIL_type evaluate_set_global_C(EXP_type Tail_call_expression)
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type initialize_set_global(NIL_type)
-  { Continue_set_global_number = Thread_Register(continue_set_global); }
+  { slipken_persist_init(Continue_set_global_number, Thread_Register(continue_set_global)); }
 
 /*--------------------------------------------------------------------------------------*/
 /*-------------------------------------- set local -------------------------------------*/
@@ -2602,7 +2602,7 @@ static NIL_type evaluate_set_local_C(EXP_type Tail_call_expression)
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type initialize_set_local(NIL_type)
-  { Continue_set_local_number = Thread_Register(continue_set_local); }
+  { slipken_persist_init(Continue_set_local_number, Thread_Register(continue_set_local)); }
 
 /*--------------------------------------------------------------------------------------*/
 /*---------------------------------------- thunk ---------------------------------------*/
@@ -2721,8 +2721,8 @@ static NIL_type evaluate_while_C(EXP_type Tail_call_expression)
 /*--------------------------------------------------------------------------------------*/
 
 static NIL_type initialize_while(NIL_type)
-  { Continue_while_body_number = Thread_Register(continue_while_body_C);
-    Continue_while_predicate_number = Thread_Register(continue_while_predicate_C); }
+  { slipken_persist_init(Continue_while_body_number, Thread_Register(continue_while_body_C));
+    slipken_persist_init(Continue_while_predicate_number, Thread_Register(continue_while_predicate_C)); }
 
 /*--------------------------------------------------------------------------------------*/
 /*-------------------------------------- expression ------------------------------------*/
@@ -2973,29 +2973,4 @@ NIL_type Evaluate_Initialize(NIL_type)
     initialize_set_global();
     initialize_set_local();
     initialize_quasiquote();
-    initialize_while();
-
-    slipken_persist(Continue_and_number);
-    slipken_persist(Continue_application_number);
-    slipken_persist(Continue_body_number);
-    slipken_persist(Continue_cond_else_number);
-    slipken_persist(Continue_cond_number);
-    slipken_persist(Continue_continuation_number);
-    slipken_persist(Continue_define_variable_number);
-    slipken_persist(Continue_if_double_number);
-    slipken_persist(Continue_if_single_number);
-    slipken_persist(Continue_let_number);
-    slipken_persist(Continue_native_number);
-    slipken_persist(Continue_or_number);
-    slipken_persist(Continue_procedure_number);
-    slipken_persist(Continue_procedure_vararg_number);
-    slipken_persist(Continue_quasiquote_list_number);
-    slipken_persist(Continue_quasiquote_tail_number);
-    slipken_persist(Continue_sequence_number);
-    slipken_persist(Continue_set_global_number);
-    slipken_persist(Continue_set_local_number);
-    slipken_persist(Continue_unquote_splicing_number);
-    slipken_persist(Continue_vararg_number);
-    slipken_persist(Continue_while_body_number);
-    slipken_persist(Continue_while_predicate_number);
-  }
+    initialize_while(); }
