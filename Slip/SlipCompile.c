@@ -464,7 +464,7 @@ static NIL_type define_standard_function_C(UNS_type Offset,
     operand_list_pair = Stack_Peek();
     body_expression = operand_list_pair->cdr;
     sequence_C(body_expression,
-               Pool_Delay);
+               Pool_Define);
     frame_size = Dictionary_Get_Frame_Size();
     offset_number = make_NBR(Offset);
     parameter_count_number = make_NBR(Parameter_count);
@@ -504,7 +504,7 @@ static NIL_type define_variable_arity_function_C(UNS_type Offset,
     operand_list_pair = Stack_Peek();
     body_expression = operand_list_pair->cdr;
     sequence_C(body_expression,
-               Pool_Delay);
+               Pool_Define);
     frame_size = Dictionary_Get_Frame_Size();
     offset_number = make_NBR(Offset);
     parameter_count_number = make_NBR(Parameter_count);
@@ -539,14 +539,14 @@ static NIL_type define_function_C(PAI_type Operand_list_pair)
     name_symbol = pattern_pair->car;
     if (!is_SYM(name_symbol))
       compilation_keyword_error(IVV_error,
-                                Pool_Delay);
+                                Pool_Define);
     offset = Dictionary_Define_M(name_symbol);
     Dictionary_Enter_Nested_Scope_C();
     Operand_list_pair = Stack_Peek();
     pattern_pair = Operand_list_pair->car;
     parameter_list_pair = pattern_pair->cdr;
     parameter_list_C(parameter_list_pair,
-                     Pool_Delay);
+                     Pool_Define);
     parameter_count = Dictionary_Get_Frame_Size();
     residue_expression = Stack_Peek();
     tag = Grammar_Tag(residue_expression);
@@ -561,7 +561,7 @@ static NIL_type define_function_C(PAI_type Operand_list_pair)
           return;
         default:
           compilation_keyword_error(IPA_error,
-                                    Pool_Delay); }}
+                                    Pool_Define); }}
 
 static NIL_type compile_define_variable_C(PAI_type Operand_list_pair)
   { DFV_type define_variable;
@@ -575,7 +575,7 @@ static NIL_type compile_define_variable_C(PAI_type Operand_list_pair)
     Operand_list_pair = Stack_Peek();
     residue_expression = Operand_list_pair->cdr;
     single_expression_C(residue_expression,
-                        Pool_Delay);
+                        Pool_Define);
     expression = Stack_Pop();
     compile_expression_C(expression);
     MAIN_CLAIM_DEFAULT_C();
@@ -598,7 +598,7 @@ static NIL_type compile_define_C(EXP_type Operand_list_expression)
     switch (tag)
       { case NUL_tag:
           compilation_keyword_error(MSP_error,
-                                    Pool_Delay);
+                                    Pool_Define);
         case PAI_tag:
           operand_list_pair = Operand_list_expression;
           expression = operand_list_pair->car;
@@ -612,11 +612,11 @@ static NIL_type compile_define_C(EXP_type Operand_list_expression)
                 return;
               default:
                 compilation_keyword_error(IVP_error,
-                                          Pool_Delay); }
+                                          Pool_Define); }
           return;
         default:
           compilation_keyword_error(ITF_error,
-                                    Pool_Delay); }}
+                                    Pool_Define); }}
 
 /*--------------------------------------------------------------------------------------*/
 /*---------------------------------------- delay ---------------------------------------*/

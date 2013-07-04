@@ -327,7 +327,9 @@ NIL_type Memory_Replace(PTR_type Old_pointer,
     Head->ptr = root;
     sweep_and_replace(Old_pointer,
                       New_pointer);
-    traverse_and_unmark(); }
+    traverse_and_unmark();
+    root = Head->ptr;
+    Memory_After_Reclaim(root); }
 
 NIL_type Memory_Set_Tag(PTR_type Pointer,
                         BYT_type Tag)

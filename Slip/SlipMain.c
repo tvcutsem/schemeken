@@ -192,9 +192,7 @@ NIL_type Main_Reclaim_C(NIL_type)
 NIL_type Main_Replace_Vector(VEC_type Old_vector,
                              VEC_type New_vector)
   { Memory_Replace((PTR_type)Old_vector,
-                   (PTR_type)New_vector);
-    vector_copy(Old_vector,
-                New_vector); }
+                   (PTR_type)New_vector); }
 
 EXP_type Main_Reverse(EXP_type List_epression)
   { EXP_type next_expression,
