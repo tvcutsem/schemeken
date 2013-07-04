@@ -10,7 +10,7 @@ Schemeken is the marriage of:
 
   * [Ken](http://ai.eecs.umich.edu/~tpkelly/Ken/), a platform for fault-Tolerant distributed computing.
   * Slip, a Scheme interpreter developed by Prof. Theo D'Hondt. It is a lean interpreter written in C to teach students the basics of language interpreters and virtual machines in a course on [Programming Language Engineering](http://soft.vub.ac.be/~tjdhondt/PLE).
-  
+
 Getting Started
 ===============
 
@@ -119,10 +119,11 @@ You can also embed Ken IDs into your scheme program by typing `#k` followed by a
 
 * `(set! ken-receive-handler (lambda (id msg) <expr>))`: the global variable `ken-receive-handler` points to a procedure that processes incoming messages. The procedure takes as first argument the ken-id of the sender and as second argument the deserialized message. `<expr>` is evaluated as a separate "turn", and thus thanks to Ken as an "ACID" transaction. The default receive handler just displays the `id` and `msg` on the console.
 
-Future work
-===========
+Future and related work
+=======================
 
-In coming versions we plan to layer a more elaborate messaging system on top of the Ken primitives, such as asynchronous messages with promises (non-blocking futures).
+  * In coming versions we plan to layer a more elaborate messaging system on top of the Ken primitives, such as asynchronous messages with promises (non-blocking futures).
+  * SchemeKen inspired the work on [v8ken](https://github.com/supergillis/v8-ken), a distributed, resilient JavaScript engine.
 
 Team
 ====
