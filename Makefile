@@ -21,9 +21,14 @@ Slip/SlipKen.c \
 Ken/ken.c \
 Ken/kencom.c \
 Ken/kencrc.c \
-Ken/kenext.c \
 Ken/kenpat.c \
 Ken/kenvar.c
+
+ifdef GOBACKN
+SOURCES += Ken/kenext_gbn.c
+else
+SOURCES += Ken/kenext_orig.c
+endif
 
 DEBUG_FLAGS=-g
 
@@ -48,3 +53,5 @@ schemeken: $(OBJECTS)
 clean:
 	-rm -r build
 	-rm schemeken
+
+.PHONY: all

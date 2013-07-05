@@ -1,6 +1,6 @@
 #if 0
 
-    Copyright (c) 2011-2012, Hewlett-Packard Development Co., L.P.
+    Copyright (c) 2011-2013, Hewlett-Packard Development Co., L.P.
 
     All rights reserved.
 
@@ -396,8 +396,15 @@ int64_t ken_current_time(void) {
    Flag should be volatile sig_atomic_t. */
 
 /* Handler called when read-only page is written.  We must declare
-   external variables accessed by the handler "volatile"; see Sec. 21.1.3
-   p. 428 of Kerrisk, _The Linux Programming Interface_. */
+   external variables accessed by the handler "volatile"; see
+   Sec. 21.1.3 p. 428 of Kerrisk, _The Linux Programming Interface_.
+   Note that the current handler is not thread safe, so if you insist
+   on writing multi-threaded code you need to worry about races on
+   the shared data accessed by the function below.  Pthread spin
+   locks in glibc 2.17 for x86_64 Linux appear to be a safe and
+   reasonable way of protecting the shared data accessed by the
+   function below; as of April 2013 this approach has survived some
+   testing by the MaceKen team without apparent error. */
 static void i_ken_SIGSEGV_sigaction(int signo, siginfo_t * info, void * uc) {
   int my_errno;
   void * p;
@@ -651,11 +658,7 @@ static void * i_ken_recover(void) {
         FP1("end truncate\n");
       }
       fd = open(statefile, O_RDONLY);   NTF(0 <= fd);
-      final = mmap(addr, BLOB_BYTES, PROT_READ, MAP_PRIVATE | MAP_FIXED, fd, 0);
-      // tvcutsem: when adding | MAP_FIXED, mmap fails
-      // tvcutsem: changed since final is sometimes != addr
-      // now it just fails further down the road... (ken.c:964)
-      //NTF(final != MAP_FAILED);
+      final = mmap(addr, BLOB_BYTES, PROT_READ, MAP_PRIVATE, fd, 0);
       NTF(addr == final);
       CLOSE(fd);
       return final;

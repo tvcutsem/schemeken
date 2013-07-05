@@ -1,6 +1,6 @@
 #if 0
 
-    Copyright (c) 2011-2012, Hewlett-Packard Development Co., L.P.
+    Copyright (c) 2011-2013, Hewlett-Packard Development Co., L.P.
 
     All rights reserved.
 
@@ -37,7 +37,7 @@
 
 /* Process that commits turn, asynchronously externalizes messages.
 
-   Notes on current implementation: As of early June 2012, the
+   Notes on current implementation: As of early April 2013, the
    implmementation sends messages over UDP, re-transmitting with
    exponential backoff until ack is received.  Two additional
    transport schemes have been developed by the Ken community but
@@ -54,7 +54,11 @@
    providers block UDP traffic; anecdotally this appears to be true
    for several universities, which block incoming UDP packets.  Ken
    can't help you if your data transmission network doesn't transmit
-   data. */
+   data.
+
+   See file "kenext_gbn.c" for an alternative transport
+   that implements Go-Back-N.
+ */
 
 #include <fcntl.h>
 #include <glob.h>
