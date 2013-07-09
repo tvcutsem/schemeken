@@ -105,7 +105,9 @@ Schemeken adds the following primitives to make use of Ken's messaging system:
   <ken-id 127.0.0.1:6789>
   ````
 
-You can also embed Ken IDs into your scheme program by typing `#k` followed by an IP address/port, for example `#k127.0.0.1:6789`.
+  Ken IDs are first class values: you can store them or pass them around like any other value.
+  You can embed Ken IDs into your Schemeken program by typing `#k` followed by an IP address/port, for example `#k127.0.0.1:6789`.
+  There is a shorthand for local Ken IDs: `#kXXXX` is the same as `#k127.0.0.1:XXXX`.
 
 * `(ken-send <ken-id> <expr>)`: Sends a value as a message to the given Ken process. Messages are serialized as their printed representation and deserialized as if read by the `(read)` primitive. This means valid messages currently include numbers, booleans, symbols, strings, characters, vectors and lists, but not procedures or continuations.
 
