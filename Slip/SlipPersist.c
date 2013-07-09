@@ -53,6 +53,7 @@ struct Slipken_data * create_slipken_data() {
 
   struct Slipken_data * data = slipken_simple_malloc(sizeof (struct Slipken_data));
   NTF(data != NULL);
+  data->my_version = Program_version;
   data->my_pid = getpid();
   data->num_persists = 0;
   data->Memory = Memory;
@@ -70,4 +71,5 @@ void save_slipken_data(struct Slipken_data * data) {
 void load_slipken_data(struct Slipken_data * data) {
   load_persists(data->num_persists, data->persist_base);
   data->my_pid = getpid();
+  NTF(data->my_version == Program_version);
 }

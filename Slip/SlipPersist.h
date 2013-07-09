@@ -4,8 +4,12 @@
 #include "ken.h"
 #include "kencom.h"
 
+
 enum { Extra_memory_size = 5  * 1024 * 1024,
        Memory_size       = 10 * 1024 * 1024  };
+
+/* CHANGE THIS every time Slipken_data or the memory layout changes. */
+enum { Program_version   = 2013070901 };
 
 typedef struct {
   void * system;
@@ -14,6 +18,7 @@ typedef struct {
 } persist_t;
 
 struct Slipken_data {
+  size_t my_version;
   pid_t my_pid;
   void * Memory;
   unsigned int num_persists;
