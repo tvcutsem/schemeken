@@ -66,16 +66,22 @@ static BLN_type looks_like_ken_id(RWS_type Rawstring)
     UNS_type ip[4], port;
 
     size = strlen(Rawstring);
-    if (KEN_ID_BUF_SIZE < size || 8 > size)
+    if (KEN_ID_BUF_SIZE < size || 4 > size)
       return Grammar_Is_False;
     r = sscanf(Rawstring, "%d.%d.%d.%d:%d", &ip[0], &ip[1], &ip[2], &ip[3], &port);
-    if (r != 5)
+    if (r != 5) {
+      r = sscanf(Rawstring, "%d", &port);
+      if (r == 1 && 1024 <= port && UINT16_MAX > port) {
+        sprintf(Rawstring, "127.0.0.1:%d", port);
+        return Grammar_Is_True;
+      }
       return Grammar_Is_False;
-    if (   (   0 <= ip[0] &&        256 >  ip[0])
-        && (   0 <= ip[1] &&        256 >  ip[1])
-        && (   0 <= ip[2] &&        256 >  ip[2])
-        && (   0 <= ip[3] &&        256 >  ip[3])
-        && (1024 <= port  && UINT16_MAX >= port))
+    }
+    if (   (   0 <= ip[0] &&        256 > ip[0])
+        && (   0 <= ip[1] &&        256 > ip[1])
+        && (   0 <= ip[2] &&        256 > ip[2])
+        && (   0 <= ip[3] &&        256 > ip[3])
+        && (1024 <= port  && UINT16_MAX > port))
         return Grammar_Is_True;
     return Grammar_Is_False;
   }
